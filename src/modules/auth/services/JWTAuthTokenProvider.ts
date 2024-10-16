@@ -10,7 +10,8 @@ export const JWTAuthTokenProvider = (): IAuthTokenProvider => {
 			return jwt.sign(
 				{
 					id: payload.id,
-					username: payload.username,
+					firstName: payload.firstName,
+					lastName: payload.lastName,
 					profilePicture: payload.profilePicture,
 				},
 				JWT_SECRET ?? 'NoSecret',
