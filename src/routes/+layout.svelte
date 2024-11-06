@@ -1,11 +1,11 @@
 <script lang="ts">
-	import '../index.css';
-
+	import '../app.css';
 	import { user } from '$auth/stores/UserStore';
+	import type { LayoutServerData } from './$types';
 
-	export let data;
+	export let data: LayoutServerData;
 
-	$: user.set(data.user);
+	$: $user = data.user;
 </script>
 
 <slot />

@@ -10,16 +10,21 @@ import { CheckBodyMiddleware } from '$lib/services/ZodBodyParser';
 import { loginDto, type LoginDto } from '$auth/dto/LoginDto';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
-	const queryParams = new URLSearchParams(url.search);
-	if (queryParams.has('error')) {
+	const code = url.searchParams.get("code");
+	const state = url.searchParams.get("state");
+
+	const storedState = cookies.get(COOKEYS.GOOGLE_OAUTH_STATE) ?? null;
+
+	if (!code || !state || !storedState || state !== storedState) {
 		const useCaseError = UseCaseResponseBuilder.error(
 			400,
-			'You need to grant permission to Beasty to access your gite account.'
+			'You need to grant permission to Beasty to access your google account.'
 		);
 		return ApiResponse.send(useCaseError);
 	}
 
-	const params = Object.fromEntries([...queryParams.entries()]);
+
+	const params = Object.fromEntries([...url.searchParams.entries()]);
 
 	const checkBodyMiddleware = await CheckBodyMiddleware<LoginDto>(params, loginDto);
 	if (!checkBodyMiddleware.isSuccess) {

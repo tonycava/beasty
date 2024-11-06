@@ -18,6 +18,7 @@
     "@total-typescript/ts-reset": "^0.6.1",
     "@types/bun": "^1.1.11",
     "@types/eslint": "^9.6.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.7",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.0.0",
@@ -38,11 +39,14 @@
   "type": "module",
   "dependencies": {
     "@prisma/client": "^5.21.0",
+    "@tailwindcss/typography": "^0.5.15",
     "@trpc/client": "^10.45.2",
     "@trpc/server": "^10.45.2",
+    "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "oslo": "^1.2.1",
     "superjson": "^2.2.1",
+    "sveltekit-superforms": "^2.20.0",
     "trpc-sveltekit": "^3.6.2",
     "zod": "^3.23.8"
   }
