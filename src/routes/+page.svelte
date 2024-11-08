@@ -66,7 +66,9 @@
 		{/if}
 	</div>
 
-	<div style="height: 2000px" use:inview oninview_enter={() => {
+	<div style="height: 2000px" use:inview oninview_leave={() => {
+	changeSection('home')
+}} oninview_enter={() => {
 	changeSection('beasty')
 }}>
 	<span>
