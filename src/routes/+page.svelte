@@ -3,12 +3,13 @@
 	import { user } from '$auth/stores/UserStore';
 	import { LogoutUseCase } from '$auth/usecases/LogoutUser';
 	import Cookies from 'js-cookie';
+	import Footer from '$lib/components/layout/Footer.svelte';
 
 	export let data: PageServerData;
 
 	const disconnect = () => {
-		LogoutUseCase({ cookieProvider: Cookies }).execute()
-	}
+		LogoutUseCase({ cookieProvider: Cookies }).execute();
+	};
 </script>
 
 
@@ -19,3 +20,6 @@
 {:else }
 	<a href={data.url}>Connect with google</a>
 {/if}
+
+
+<Footer />

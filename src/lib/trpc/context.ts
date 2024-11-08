@@ -1,4 +1,3 @@
-
 import type { RequestEvent } from '@sveltejs/kit';
 
 export async function createContext(event: RequestEvent) {
