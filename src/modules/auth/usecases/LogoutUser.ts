@@ -20,7 +20,7 @@ export const LogoutUseCase: UseCase<Input, Output> = (dependencies) => {
 	const { cookieProvider } = dependencies;
 	return {
 		execute: async () => {
-			cookieProvider.remove(COOKEYS.JWT_TOKEN);
+			cookieProvider.remove(COOKEYS.JWT_TOKEN, {path: '/'});
 			return UseCaseResponseBuilder.success(200, "Success.");
 		}
 	};
