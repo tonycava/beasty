@@ -55,8 +55,6 @@
 
 <Navbar connectionUrl={data.url} bind:sectionsView={sectionsView} />
 
-<div class="pt-32 bg-white z-20 h-32 w-full fixed"></div>
-
 <div class="pt-32 m-0 z-10">
 	<div style="height: 2000px">
 		{#if $user}

@@ -31,11 +31,11 @@
 	</div>
 {/snippet}
 
-<nav class="flex items-center bg-gradient-to-b from-secondary/15 to-white/15 fixed w-full z-50 h-32">
-	<div class="flex gap-4 items-center p-2 justify-center ml-4">
+<nav class="flex items-center bg-gradient-to-b from-secondary/15 to-white/15 fixed w-full z-50 h-28">
+	<div class="flex gap-4 items-center p-2 justify-center z-50 ml-4">
 		<Svg size={18} src="/icons/Logo.svg" />
 	</div>
-	<div class="flex gap-4 items-center p-2 justify-center">
+	<div class="flex gap-4 items-center p-2 z-50 justify-center">
 		<Svg size={24} src="/icons/Beasty.svg" />
 	</div>
 	<div class="flex text-secondary mx-auto font-bold space-x-8 text-2xl">
@@ -66,3 +66,5 @@
 		</a>
 	{/if}
 </nav>
+
+<div class="pt-28 bg-white z-20 h-28 w-full fixed"></div>
