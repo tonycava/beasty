@@ -2,16 +2,57 @@
 	import type { PageServerData } from './$types';
 	import { user } from '$auth/stores/UserStore';
 	import { LogoutUseCase } from '$auth/usecases/LogoutUser';
+	import Navbar from '$lib/components/layout/Navbar.svelte';
+	import {inview} from 'svelte-inview';
 	import Cookies from 'js-cookie';
     import { Messeys } from '$lib/utils/messages.utils';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
-	export let data: PageServerData;
+	type Props = {
+		data: PageServerData;
+	}
 
+	let { data }: Props = $props();
+
+	type SectionsView = {
+		"home": boolean,
+		"beasty": boolean,
+		"tryIt": boolean,
+		"premium": boolean,
+	}
+
+	onMount(() => {
+		if (!browser) return
+		window.addEventListener("scroll", () => {
+			if (window.scrollY === 0) {
+				changeSection('home')
+			}
+		});
+	})
+
+	let sectionsView: SectionsView = $state({
+		"home": true,
+		"beasty": false,
+		"tryIt": false,
+		"premium": false,
+	})
+
+	const changeSection = (section: keyof SectionsView) => {
+		const t = 	Object.keys(sectionsView) as Array<keyof SectionsView>;
+		t.forEach((key) => {
+			sectionsView[key] = false
+		})
+		sectionsView[section] = true
+	}
+
+	$inspect({ sectionsView });
 	const disconnect = () => {
 		LogoutUseCase({ cookieProvider: Cookies }).execute()
 	}
 </script>
 
+<Navbar connectionUrl={data.url} bind:sectionsView={sectionsView} />
 
 {#if $user}
 	You are login<br>
@@ -21,7 +62,7 @@
 	<a href={data.url}>Connect with google</a>
 {/if}
 
-<div class="container mx-auto px-4">
+<div class="container mx-auto px-4 pt-32 z-10">
 	<div class="flex flex-col md:flex-row items-center justify-between">
 		<div class="md:w-1/2">
 			<div class=" mb-8 md:mb-0 w-2 w-4/5 mx-auto font-medium">
