@@ -32,15 +32,20 @@
 <!-- Carte principale -->
 <div class="flex h-screen w-screen items-center justify-center">
 	<div class="relative h-[550px] w-[950px] rounded-[10px] border border-black bg-[#FFF0C8] p-5">
-		<!-- Groupe -->
-		<div class="relative h-[450px] w-[850px] rounded-[10px] border border-black bg-[#FFF0C8] p-5">
-			<!-- cadre -->
-			{#if animals[currentAnimalIndex]}
+		{#if animals[currentAnimalIndex]}
+			<div
+				class="card-anim {direction === 'left'
+					? 'left'
+					: direction === 'right'
+						? 'right'
+						: ''} relative h-[450px] w-[850px] rounded-[10px] border border-gray bg-[#FFF0C8] p-5"
+				class:left={isAnimating && direction === 'left'}
+				class:right={isAnimating && direction === 'right'}
+				style="left: 25px; top: 25px;"
+			>
+				<!-- Section cadre -->
 				<div
-					class="card-anim flex h-[400px] w-[336px] flex-col items-center justify-start rounded-[10px] bg-[#3B7080] p-6"
-					class:left={isAnimating && direction === 'left'}
-					class:right={isAnimating && direction === 'right'}
-					style="left: 25px; top: 25px;"
+					class="flex h-[400px] w-[336px] flex-col items-center justify-start rounded-[10px] bg-[#3B7080] p-6"
 				>
 					<div class="mb-2 h-[275px] w-[275px] bg-gray-300"></div>
 					<div class="my-4 h-[2px] w-full bg-white"></div>
@@ -52,61 +57,61 @@
 						<div>{animals[currentAnimalIndex]?.name}</div>
 					</div>
 				</div>
-			{/if}
 
-			<!-- Section description -->
-			<div
-				class="description-container absolute flex flex-col justify-start p-6 border border-gray-400 rounded-[10px] shadow-lg animate-fade-in"
-				style="left: 400px; top: 25px; background-color: #f5f5f5;"
-			>
+				<!-- Section description -->
 				<div
-					class="font-semibold text-[#FF9F63]"
-					style="font-family: 'Poppins', sans-serif; font-size: 17px;"
+					class="description-container absolute flex flex-col justify-start p-6 border border-gray-400 rounded-[10px] shadow-lg animate-fade-in"
+					style="left: 400px; top: 25px; background-color: #f5f5f5; width: 50%;"
 				>
-					Description :
+					<div
+						class="font-semibold text-[#FF9F63]"
+						style="font-family: 'Poppins', sans-serif; font-size: 17px;"
+					>
+						Description :
+					</div>
+					<div class="mt-4 text-black" style="font-family: 'Poppins', sans-serif; font-size: 15px;">
+						{animals[currentAnimalIndex]?.name}
+					</div>
+					<div class="mx-auto my-8 h-[1px] w-3/4 bg-black"></div>
+					<ul class="text-black" style="font-family: 'Poppins', sans-serif; font-size: 20px;">
+						<li class="grid grid-cols-2">
+							<span class="font-semibold text-[#FF9F63]">Anniversaire :</span>
+							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+						</li>
+						<li class="grid grid-cols-2">
+							<span class="font-semibold text-[#FF9F63]">Espèce :</span>
+							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+						</li>
+						<li class="grid grid-cols-2">
+							<span class="font-semibold text-[#FF9F63]">Race :</span>
+							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+						</li>
+						<li class="grid grid-cols-2">
+							<span class="font-semibold text-[#FF9F63]">Sexe :</span>
+							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+						</li>
+					</ul>
 				</div>
-				<div class="mt-4 text-black" style="font-family: 'Poppins', sans-serif; font-size: 15px;">
-					{animals[currentAnimalIndex]?.name}
-				</div>
-				<div class="mx-auto my-8 h-[1px] w-3/4 bg-black"></div>
-				<ul class="text-black" style="font-family: 'Poppins', sans-serif; font-size: 20px;">
-					<li class="grid grid-cols-2">
-						<span class="font-semibold text-[#FF9F63]">Anniversaire :</span>
-						<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
-					</li>
-					<li class="grid grid-cols-2">
-						<span class="font-semibold text-[#FF9F63]">Espèce :</span>
-						<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
-					</li>
-					<li class="grid grid-cols-2">
-						<span class="font-semibold text-[#FF9F63]">Race :</span>
-						<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
-					</li>
-					<li class="grid grid-cols-2">
-						<span class="font-semibold text-[#FF9F63]">Sexe :</span>
-						<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
-					</li>
-				</ul>
-			</div>
 
-			<!-- Boutons en bas -->
-			<div class="absolute bottom-0 left-0 right-0 mb-8 flex justify-center gap-5 p-3">
-				<button
-					on:click={() => handleAction('match')}
-					class="ml-auto flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#3B7080]"
-					aria-label="Match"
-				>
-					<div class="flex h-[50px] w-[50px] items-center justify-center bg-green-300"></div>
-				</button>
-				<button
-					on:click={() => handleAction('reject')}
-					class="mr-auto flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#FF9F63]"
-					aria-label="Reject"
-				>
-					<div class="flex h-[50px] w-[50px] items-center justify-center bg-red-300"></div>
-				</button>
+				<!-- Section boutons sous description-->
+				<div class="absolute bottom-6 right-6 flex gap-5">
+					<button
+						on:click={() => handleAction('match')}
+						class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#3B7080]"
+						aria-label="Match"
+					>
+						<div class="flex h-[50px] w-[50px] items-center justify-center bg-green-300"></div>
+					</button>
+					<button
+						on:click={() => handleAction('reject')}
+						class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#FF9F63]"
+						aria-label="Reject"
+					>
+						<div class="flex h-[50px] w-[50px] items-center justify-center bg-red-300"></div>
+					</button>
+				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 </div>
 
