@@ -38,7 +38,7 @@
 	<div class="flex gap-4 items-center p-2 z-50 justify-center">
 		<Svg size={24} src="/icons/Beasty.svg" />
 	</div>
-	<div class="flex text-secondary mx-auto font-bold space-x-8 text-2xl">
+	<div class="hidden text-secondary mx-auto font-bold space-x-8 text-2xl lg:flex">
 		{@render sections("Accueil", sectionsView.home)}
 		{#if $user}
 			{@render sections("Profil", sectionsView.beasty)}
@@ -51,13 +51,13 @@
 		{/if}
 	</div>
 	{#if $user}
-			<PrimaryButton type="submit" class="w-[10%] text-lg mr-4" onclick={onDisconnect}>
+			<PrimaryButton type="submit" class="hidden w-[10%] lg:text-lg mr-4 lg:block" onclick={onDisconnect}>
 				<div class="flex gap-4 items-center p-2 justify-center font-bold tracking-widest">
 					DECONNEXION
 				</div>
 			</PrimaryButton>
 	{:else}
-		<a href={connectionUrl} class="w-fit text-lg mr-5">
+		<a href={connectionUrl} class="hidden w-fit lg:text-lg mr-5 lg:block">
 			<PrimaryButton type="submit" class="px-3">
 				<div class="flex gap-4 items-center p-2 justify-center font-bold tracking-widest">
 					CONNEXION
@@ -65,6 +65,9 @@
 			</PrimaryButton>
 		</a>
 	{/if}
+	<button class="flex gap-4 items-center ml-auto p-2 lg:hidden text-secondary">
+		<Svg size={18} src="/icons/Menu.svg" />
+	</button>
 </nav>
 
 <div class="pt-28 bg-white z-20 h-28 w-full fixed"></div>
