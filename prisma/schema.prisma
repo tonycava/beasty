@@ -17,7 +17,6 @@ model User {
   lastName     String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
-
   email          String
   profilePicture String
   birthday       String
