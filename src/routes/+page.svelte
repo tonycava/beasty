@@ -58,13 +58,6 @@
 <div class="pt-32 bg-white z-20 h-32 w-full fixed"></div>
 
 <div class="container mx-auto px-4 pt-32 z-10">
-	<div style="height: 2000px" use:inview oninview_leave={() => {
-    console.log('Leaving section: home');
-    changeSection('beasty');
-		}} oninview_enter={() => {
-				console.log('Entering section: home');
-				changeSection('home');
-		}}>
 		<div class="flex flex-col mt-28 md:flex-row items-center justify-between">
 			<div class="md:w-1/2">
 				<div class=" mb-8 md:mb-0 w-4/5 mx-auto ">
@@ -86,8 +79,8 @@
 			<div class="md:w-1/2">
 				<img class="size-3/4" src="/header-chien.png" alt="image de chien"/>
 			</div>
-		</div>
 	</div>
+
 
 
 	<div style="height: 2000px" use:inview oninview_enter={() => {
