@@ -58,7 +58,7 @@
 <div class="pt-32 bg-white z-20 h-32 w-full fixed"></div>
 
 <div class="container mx-auto px-4 pt-32 z-10">
-		<div class="flex flex-col mt-28 md:flex-row items-center justify-between">
+		<div class="flex flex-col mt-28 md:flex-row items-center justify-between mb-96">
 			<div class="md:w-1/2">
 				<div class=" mb-8 md:mb-0 w-4/5 mx-auto ">
 					<h1 class="text-center font-normal text-4xl leading-tight mb-6">Découvrez {Messeys.NOM_APPLI}</h1>
@@ -81,6 +81,13 @@
 			</div>
 	</div>
 
+	<div style="height: 2000px" use:inview oninview_enter={() => {
+	changeSection('beasty')
+}}>
+	<span>
+		Beasty
+	</span>
+	</div>
 
 
 	<div style="height: 2000px" use:inview oninview_enter={() => {
