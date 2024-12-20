@@ -4,11 +4,12 @@
 	import { trpc } from '$lib/clients/client';
 	import { onMount } from 'svelte';
 	import type { User } from '../../modules/profile/entities/User';
-    import moment from 'moment';
 
 	let userProfile: User | null = null;
     let now = new Date();
     let year = 0;
+    let month = 0;
+    let day = 0;
 
     const formatter = new Intl.DateTimeFormat('fr-FR', {
         year: 'numeric',
@@ -16,17 +17,14 @@
         day: 'numeric',
     });
 
-    console.log(formatter.format(now));
-
-    // moment.locale('fr');
-    // let date = moment(now).format('LL');
-
 	onMount(async () => {
 		userProfile = await trpc($page).getUser.query($user?.id!);
         year = now.getFullYear();
+        month = now.getMonth()+1;
+        day = now.getDate();
+        console.log(user);
 	});
 </script>
-
 <div class="h-screen">
 	<div class="flex h-1/2">
         {#if userProfile === null}
@@ -56,7 +54,11 @@
                 </div>
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="age">Âge :</label>
-                    <p class="w-3/4 ml-2" id="age">{year-Number((userProfile.birthday.split('/'))[2])} ans</p>
+                    {#if ((month > Number((userProfile.birthday.split('/'))[1]) || year > Number((userProfile.birthday.split('/'))[2])) || (day >= Number((userProfile.birthday.split('/'))[0])) && (month = Number((userProfile.birthday.split('/'))[1])))}
+                        <p class="w-3/4 ml-2" id="age"> {(year-Number((userProfile.birthday.split('/'))[2]))} ans</p>
+                    {:else}
+                        <p class="w-3/4 ml-2" id="age"> {(year-Number((userProfile.birthday.split('/'))[2]))-1} ans</p>
+                    {/if}
                 </div>
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="birthday">Anniversaire :</label>
@@ -65,7 +67,7 @@
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="email"
                         >Adresse e-mail :</label>
-                    <p class="w-3/4 ml-2" id="email">{userProfile.email}</p>
+                    <p class="w-3/4 ml-2" id="email">{userProfile.email}</p>                
                 </div>
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="bio">Bio :</label>
