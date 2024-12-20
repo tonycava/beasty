@@ -32,22 +32,40 @@
 {/snippet}
 
 <nav class="flex items-center bg-gradient-to-b from-secondary/15 to-white/15 fixed w-full z-50 h-32">
-	<div class="flex gap-4 items-center p-2 justify-center ml-4">
-		<Svg size={18} src="/icons/Logo.svg" />
-	</div>
-	<div class="flex gap-4 items-center p-2 justify-center">
-		<Svg size={24} src="/icons/Beasty.svg" />
-	</div>
+	<a href="/" class="cursor-pointer">
+		<div class="flex gap-4 items-center p-2 justify-center ml-4">
+			<Svg size={18} src="/icons/Logo.svg" />
+		</div>
+	</a>
+	<a href="/" class="cursor-pointer">
+		<div class="flex gap-4 items-center p-2 justify-center">
+			<Svg size={24} src="/icons/Beasty.svg" />
+		</div>
+	</a>
 	<div class="hidden text-secondary mx-auto font-bold space-x-8 text-2xl lg:flex">
+		<a href="/" class="cursor-pointer">
 		{@render sections("Accueil", sectionsView.home)}
+		</a>
 		{#if $user}
-			{@render sections("Profil", sectionsView.beasty)}
-			{@render sections("Messages", sectionsView.tryIt)}
-			{@render sections("BeastyMatcher", sectionsView.premium)}
+			<a href="/profil" class="cursor-pointer">
+				{@render sections("Profil", sectionsView.beasty)}
+			</a>
+			<a href="/messages" class="cursor-pointer">
+				{@render sections("Messages", sectionsView.tryIt)}
+			</a>
+			<a href="/premium" class="cursor-pointer">
+				{@render sections("Premium", sectionsView.premium)}
+			</a>
 		{:else}
-			{@render sections("Beasty", sectionsView.beasty)}
-			{@render sections("Essayez-le", sectionsView.tryIt)}
-			{@render sections("Premium", sectionsView.premium)}
+			<a href="/beasty" class="cursor-pointer">
+				{@render sections("Beasty", sectionsView.beasty)}
+			</a>
+			<a href="/essayer" class="cursor-pointer">
+				{@render sections("Essayez-le", sectionsView.tryIt)}
+			</a>
+			<a href="/premium" class="cursor-pointer">
+				{@render sections("Premium", sectionsView.premium)}
+			</a>
 		{/if}
 	</div>
 	{#if $user}
