@@ -20,4 +20,7 @@ model User {
 
   email          String
   profilePicture String
+  birthday String
+  bio String @default("")
 }
+
