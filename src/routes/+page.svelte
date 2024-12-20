@@ -10,6 +10,7 @@
 	import { inview } from 'svelte-inview';
 	import Header from '$lib/components/layout/Header.svelte';
 	import HomeBeasty from '$lib/components/layout/HomeBeasty.svelte';
+	import HomeTryIt from '$lib/components/layout/HomeTryIt.svelte';
 
 
 	type Props = {
@@ -62,6 +63,8 @@
 <Header />
 
 <HomeBeasty/>
+
+<HomeTryIt/>
 
 <div
 		style="height: 2000px"
