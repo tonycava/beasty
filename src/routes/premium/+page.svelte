@@ -8,6 +8,7 @@
 	import { user } from '$auth/stores/UserStore';
 	import { trpc } from '$lib/clients/client';
 	import { page } from '$app/stores';
+	import PricingComparison from '$lib/components/layout/PricingComparison.svelte';
 
 	export let data: PageServerData;
 
@@ -152,6 +153,10 @@
 					</div>
 				{/each}
 			</div>
+		</div>
+
+		<div class="space-y-16 pb-6">
+			<PricingComparison />
 		</div>
 	</main>
 

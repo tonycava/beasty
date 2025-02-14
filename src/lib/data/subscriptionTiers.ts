@@ -18,7 +18,7 @@ export const subscriptionTiers: Record<SubscriptionTier, Tier> = {
 	[SubscriptionTier.Essentiel]: {
 		name: "Essentiel",
 		stripePriceId: env.STRIPE_ESSENTIEL_PLAN_STRIPE_PRICE_ID,
-		priceInCents: 999,
+		priceInCents: 499,
 		description: "Parfait pour commencer",
 		features: [
 			"Personnalisation basique du profil",
@@ -30,7 +30,7 @@ export const subscriptionTiers: Record<SubscriptionTier, Tier> = {
 	[SubscriptionTier.Premium]: {
 		name: "Premium",
 		stripePriceId: env.STRIPE_PREMIUM_PLAN_STRIPE_PRICE_ID,
-		priceInCents: 1999,
+		priceInCents: 999,
 		description: "Idéal pour les passionnés d'animaux",
 		features: [
 			"Tous les avantages Essentiel",
@@ -44,7 +44,7 @@ export const subscriptionTiers: Record<SubscriptionTier, Tier> = {
 	[SubscriptionTier.Business]: {
 		name: "Business",
 		stripePriceId: env.STRIPE_BUSINESS_PLAN_STRIPE_PRICE_ID,
-		priceInCents: 4999,
+		priceInCents: 9999,
 		description: "Pour ceux qui veulent aller plus loin",
 		features: [
 			"Tous les avantages Premium",
