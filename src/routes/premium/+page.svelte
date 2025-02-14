@@ -175,7 +175,7 @@
 						</div>
 
 						<button class="w-full bg-white text-teal-600 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-teal-50 transition-colors duration-300 mt-auto text-sm sm:text-base">
-							Contacter les Ventes
+							Prendre l'abonnement
 						</button>
 					</div>
 				</div>
