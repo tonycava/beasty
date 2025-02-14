@@ -1,6 +1,11 @@
 export type Animal = {
+	sex: any;
+	breed: any;
+	species: any;
+	bio: any;
+	birthday: any;
+	firstName: any;
     id: string;
-    name: string;
 };
 
 export type AnimalWhitoutId = Omit<Animal, 'id'>;

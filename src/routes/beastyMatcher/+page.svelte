@@ -1,27 +1,50 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Animal } from '../../modules/matcher/entities/Animal';
+	import { getMatcher, createMatch } from '$lib/api/matcher';
+	import { generateUUID } from '$lib/utils/generateUUID';
 	import { user } from '$auth/stores/UserStore';
+	import type { Animal } from '../../modules/matcher/entities/Animal';
 	import { trpc } from '$lib/clients/client';
-	import { page } from '$app/stores';
 
 	let animals: Animal[] = [];
+	let selectedAnimal: Animal | null = null;
 	let currentAnimalIndex = 0;
 	let isAnimating = false;
 	let direction = '';
 
-	// Récupération des animaux
+	// Récupération des données au chargement de la page
 	onMount(async () => {
-		animals = await trpc($page).matcherRouter.getMatcher.query($user?.id!);
+		try {
+			const data = await trpc().matcherRouter.getMatcher.query($user?.id!);
+			animals = data.animals;
+			selectedAnimal = data.selectedAnimal;
+		} catch (error) {
+			console.error('Erreur lors de la récupération des animaux', error);
+		}
 	});
 
-	// Gestion des actions (match/reject)
-	function handleAction(action: 'match' | 'reject') {
-		if (isAnimating) return;
-		isAnimating = true;
-		direction = action === 'match' ? 'right' : 'left';
+	// Fonction pour gérer les actions "match" et "reject"
+	async function handleAction(action: 'accepted' | 'rejected') {
+		if (isAnimating || !selectedAnimal || !animals[currentAnimalIndex]) return;
 
-		// Une fois l'animation terminée, passer au suivant
+		isAnimating = true;
+		direction = action === 'accepted' ? 'right' : 'left';
+
+		const animalMatched = animals[currentAnimalIndex];
+
+		try {
+			await trpc().matcherRouter.createMatch.mutate({
+				id: generateUUID(),
+				animalInitiator: { id: selectedAnimal.id },
+				animalMatched: { id: animalMatched.id },
+				status: action
+			});
+			console.log('Match créé avec succès');
+		} catch (error) {
+			console.error('Erreur lors de la création du match', error);
+		}
+
+		// Animation puis passage à l'animal suivant
 		setTimeout(() => {
 			currentAnimalIndex++;
 			isAnimating = false;
@@ -53,8 +76,8 @@
 						class="flex justify-center text-white"
 						style="font-family: 'Poppins', sans-serif; font-size: 30px;"
 					>
-						<div class="mr-2">{animals[currentAnimalIndex]?.name}</div>
-						<div>{animals[currentAnimalIndex]?.name}</div>
+						<div class="mr-2">{animals[currentAnimalIndex]?.firstName}</div>
+						<div>{animals[currentAnimalIndex]?.birthday}</div>
 					</div>
 				</div>
 
@@ -70,25 +93,25 @@
 						Description :
 					</div>
 					<div class="mt-4 text-black" style="font-family: 'Poppins', sans-serif; font-size: 15px;">
-						{animals[currentAnimalIndex]?.name}
+						{animals[currentAnimalIndex]?.bio}
 					</div>
 					<div class="mx-auto my-8 h-[1px] w-3/4 bg-black"></div>
 					<ul class="text-black" style="font-family: 'Poppins', sans-serif; font-size: 20px;">
 						<li class="grid grid-cols-2">
 							<span class="font-semibold text-[#FF9F63]">Anniversaire :</span>
-							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+							<span>{animals[currentAnimalIndex]?.birthday || 'Non défini'}</span>
 						</li>
 						<li class="grid grid-cols-2">
 							<span class="font-semibold text-[#FF9F63]">Espèce :</span>
-							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+							<span>{animals[currentAnimalIndex]?.species || 'Non défini'}</span>
 						</li>
 						<li class="grid grid-cols-2">
 							<span class="font-semibold text-[#FF9F63]">Race :</span>
-							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+							<span>{animals[currentAnimalIndex]?.breed || 'Non défini'}</span>
 						</li>
 						<li class="grid grid-cols-2">
 							<span class="font-semibold text-[#FF9F63]">Sexe :</span>
-							<span>{animals[currentAnimalIndex]?.name || 'Non défini'}</span>
+							<span>{animals[currentAnimalIndex]?.sex || 'Non défini'}</span>
 						</li>
 					</ul>
 				</div>
@@ -96,14 +119,14 @@
 				<!-- Section boutons sous description-->
 				<div class="absolute bottom-6 right-6 flex gap-5">
 					<button
-						on:click={() => handleAction('match')}
+						on:click={() => handleAction('accepted')}
 						class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#3B7080]"
 						aria-label="Match"
 					>
 						<div class="flex h-[50px] w-[50px] items-center justify-center bg-green-300"></div>
 					</button>
 					<button
-						on:click={() => handleAction('reject')}
+						on:click={() => handleAction('rejected')}
 						class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#FF9F63]"
 						aria-label="Reject"
 					>
