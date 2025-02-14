@@ -23,8 +23,9 @@ export const LoginUseCase: UseCase<Input, Output> = (dependencies) => {
 	return {
 		execute: async (data) => {
 			try {
-				const user = await getUser(data.code);
-				const userInDb = await userRepository.getApprenticeByEmail(user.email);
+				const oAuthUser = await getUser(data.code);
+				
+				const userInDb = await userRepository.getApprenticeByEmail(oAuthUser.email);
 
 				if (userInDb) {
 					const token = tokenProvider.generateToken(userInDb);
@@ -35,7 +36,7 @@ export const LoginUseCase: UseCase<Input, Output> = (dependencies) => {
 					};
 				}
 
-				const createdUser = await userRepository.createUser(user);
+				const createdUser = await userRepository.createUser(oAuthUser);
 				const token = tokenProvider.generateToken(createdUser);
 
 				return {

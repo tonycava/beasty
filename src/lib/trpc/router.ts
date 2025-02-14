@@ -1,11 +1,24 @@
 import { t } from '$lib/trpc/t';
-import { AuthRouter } from '$auth/routes/AuthRouter';
+import { z } from 'zod';
+import { GetUserInfoUseCase } from '../../modules/profile/usescases/GetUserInfoUseCase';
+import { SQLiteUserProfileRepository } from '../../modules/profile/repositories/SQLiteUserProfileRepository';
 
 export const router = t.router({
-	greeting: t.procedure.query(async () => {
-		return `Hello tRPC v10 @ ${new Date().toLocaleTimeString()}`;
-	}),
-	authRouter: AuthRouter
+	getUser: t.procedure
+	.input(
+		z.string().uuid()
+	)
+	.query(async ({input}) => {
+		const getUserInfoUseCase = await GetUserInfoUseCase({
+			userRepository: SQLiteUserProfileRepository()
+		})
+		.execute(input);
+
+		if (getUserInfoUseCase.isSuccess) {
+			return getUserInfoUseCase.data
+		}
+		return null;
+	})
 });
 
 export type Router = typeof router;
