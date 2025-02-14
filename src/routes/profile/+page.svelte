@@ -24,9 +24,15 @@
         day = now.getDate();
         console.log(user);
 	});
+
+	function edit(){
+		console.log(document.getElementById("bio")?.innerHTML);
+
+	}
+
 </script>
 <div class="h-screen">
-	<div class="flex h-1/2">
+	<div class="flex h-4/5 md:h-1/2 flex-col md:flex-row">
         {#if userProfile === null}
             <div class="w-2/3 flex items-center justify-center">
                 <svg aria-hidden="true" class="w-1/4 h-1/4 animate-spin dark:text-accent fill-secondary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,116 +46,112 @@
                 <button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2 opacity-50" disabled>Supprimer le compte</button>
             </div>
         {:else}
-            <div class="w-1/3 flex justify-center items-center">
-                <img src={userProfile.profilePicture} class="h-64 w-48 mt-6 rounded-3xl shadow-[-24px_-24px_#FFDB78]" alt="Profil"/>
+            <div class="w-full md:w-1/3 flex justify-center items-center">
+                <img src="{userProfile.profilePicture}" class=" md:h-64 h-48 md:w-48 w-32 mt-6 rounded-3xl shadow-[-12px_-12px_#FFDB78] md:shadow-[-24px_-24px_#FFDB78]" alt="Profil"/>
             </div>
-            <div class="w-1/3 flex flex-col justify-center">
-                <div class="flex w-full pb-1">
-                    <label class="w-1/3 text-right text-secondary font-semibold" for="first_name">Prénom :</label>
-                    <p class="w-3/4 ml-2" id="first_name">{userProfile.firstName}</p>
-                </div>
-                <div class="flex w-full pb-1">
-                    <label class="w-1/3 text-right text-secondary font-semibold" for="last_name">Nom :</label>
-                    <p class="w-3/4 ml-2" id="last_name">{userProfile.lastName}</p>
-                </div>
-                <div class="flex w-full pb-1">
-                    <label class="w-1/3 text-right text-secondary font-semibold" for="age">Âge :</label>
-					<p class="w-3/4 ml-2" id="age">{Math.abs((new Date(Date.now() - (new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0]))).getTime()).getUTCFullYear()) - 1970)}</p>
-                </div>
-                <div class="flex w-full pb-1">
-                    <label class="w-1/3 text-right text-secondary font-semibold" for="birthday">Anniversaire :</label>
-                    <p class="w-3/4 ml-2" id="birthday">{formatter.format(new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0])))}</p>
-                </div>
-                <div class="flex w-full pb-1">
-                    <label class="w-1/3 text-right text-secondary font-semibold" for="email"
-                        >Adresse e-mail :</label>
-                    <p class="w-3/4 ml-2" id="email">{userProfile.email}</p>                
-                </div>
-                <div class="flex w-full pb-1">
-                    <label class="w-1/3 text-right text-secondary font-semibold" for="bio">Bio :</label>
-                    <p class="w-3/4 ml-2 text-justify" id="bio">
-                    
-                    </p>
-                </div>
-            </div>
-            <div class="w-1/3 flex flex-col justify-center items-center">
-                <button class="bg-accent text-white rounded-full w-3/5 mb-2">Modifier</button>
-                <button class="bg-accent text-white rounded-full w-3/5 mb-2">Ajouter un animal</button>
-                <button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2">Supprimer le compte</button>
-            </div>
+			<div class="flex flex-col lg:flex-row w-full md:w-2/3 justify-around mt-5 md:mt-0">
+				<div class="w-full lg:w-3/5 flex flex-col justify-center">
+					<div class="flex w-full pb-1">
+						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="first_name">Prénom :</label>
+						<p class="w-1/2 lg:w-2/3 ml-2" id="first_name">{userProfile.firstName}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="last_name">Nom :</label>
+						<p class="w-1/2 lg:w-2/3 ml-2" id="last_name">{userProfile.lastName}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="age">Âge :</label>
+						<p class="w-1/2 lg:w-2/3 ml-2" id="age">{Math.abs((new Date(Date.now() - (new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0]))).getTime()).getUTCFullYear()) - 1970)}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="birthday">Anniversaire :</label>
+						<p class="w-1/2 lg:w-2/3 ml-2" id="birthday">{formatter.format(new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0])))}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="email"
+							>E-mail :</label>
+						<p class="w-1/2 lg:w-2/3 ml-2" id="email">{userProfile.email}</p>                
+					</div>
+					<div class="flex w-full pb-1">
+						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="bio">Bio :</label>
+						<p class="w-1/2 lg:w-2/3 ml-2 text-justify" id="bio">
+							bloup
+						</p>
+					</div>
+				</div>
+				<div class="w-full lg:w-2/5 flex flex-col justify-center items-center mt-5 md:mt-0">
+					<button class="bg-accent text-white rounded-full w-3/5 mb-2" on:click={edit}>Modifier</button>
+					<button class="bg-accent text-white rounded-full w-3/5 mb-2">Ajouter un animal</button>
+					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2">Supprimer le compte</button>
+				</div>
+			</div>
         {/if}
 	</div>
-	<div class="flex bg-secondary bg-opacity-10 h-1/2">
-		<div class="w-1/3 flex flex-col justify-center">
-			<div class="flex w-full pb-1">
-				<label class="w-1/2 text-right text-secondary font-semibold" for="first_name"
-					>Prénom :</label
-				>
-				<p class="w-1/2 ml-2" id="first_name_pet">Hunter</p>
+	<div class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2">
+		<div class="flex flex-col lg:flex-row justify-center md:justify-around w-2/3">
+			<div class="w-full lg:w-1/3 flex flex-col justify-center mt-5 lg:mt-0">
+				<div class="flex w-full pb-1">
+					<label class="w-1/2 text-right text-secondary font-semibold" for="first_name"
+						>Prénom :</label
+					>
+					<p class="w-1/2 ml-2" id="first_name_pet">Hunter</p>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="w-1/2 text-right text-secondary font-semibold" for="age_pet">Âge :</label>
+					<p class="w-1/2 ml-2" id="age_pet">2 ans</p>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="w-1/2 text-right text-secondary font-semibold" for="birthday_pet"
+						>Anniversaire :</label
+					>
+					<p class="w-1/2 ml-2" id="birthday_pet">26 décembre</p>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="w-1/2 text-right text-secondary font-semibold" for="specie">Espèce :</label>
+					<p class="w-1/2 ml-2" id="specie">Chien</p>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="w-1/2 text-right text-secondary font-semibold" for="breed">Race :</label>
+					<p class="w-1/2 ml-2" id="breed">Corgi</p>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="w-1/2 text-right text-secondary font-semibold" for="gender">Sexe :</label>
+					<div class="flex w-1/2 ml-2 text-justify">
+						<p id="gender">Mâle</p>
+						<img src="icons/Male.svg" class="ml-2 w-4" alt="Suivant" />
+					</div>
+				</div>
 			</div>
-			<div class="flex w-full pb-1">
-				<label class="w-1/2 text-right text-secondary font-semibold" for="age_pet">Âge :</label>
-				<p class="w-1/2 ml-2" id="age_pet">2 ans</p>
-			</div>
-			<div class="flex w-full pb-1">
-				<label class="w-1/2 text-right text-secondary font-semibold" for="birthday_pet"
-					>Anniversaire :</label
-				>
-				<p class="w-1/2 ml-2" id="birthday_pet">26 décembre</p>
-			</div>
-			<div class="flex w-full pb-1">
-				<label class="w-1/2 text-right text-secondary font-semibold" for="specie">Espèce :</label>
-				<p class="w-1/2 ml-2" id="specie">Chien</p>
-			</div>
-			<div class="flex w-full pb-1">
-				<label class="w-1/2 text-right text-secondary font-semibold" for="breed">Race :</label>
-				<p class="w-1/2 ml-2" id="breed">Corgi</p>
-			</div>
-			<div class="flex w-full pb-1">
-				<label class="w-1/2 text-right text-secondary font-semibold" for="gender">Sexe :</label>
-				<div class="flex w-1/2 ml-2 text-justify">
-					<p id="gender">Mâle</p>
-					<img src="icons/Male.svg" class="ml-2 w-4" alt="Suivant" />
+			<div class="w-full lg:w-1/3 flex flex-col justify-center pl-5 lg:pl-0 pr-5 lg:pr-0 mb-5 lg:mb-0">
+				<div>
+					<label class="text-secondary font-semibold" for="bio_pet">Biographie :</label>
+					<p class="text-justify" id="bio_pet">
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend
+						at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et
+						malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique
+						ullamcorper.
+					</p>
+				</div>
+				<div class="flex mt-5">
+					<button class="bg-accent text-white rounded-full w-1/2">Modifier</button>
+					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5"
+						>Désactiver</button
+					>
 				</div>
 			</div>
 		</div>
-		<div class="w-1/3 flex flex-col justify-center">
-			<div>
-				<label class="text-secondary font-semibold" for="bio_pet">Biographie :</label>
-				<p class="text-justify" id="bio_pet">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend
-					at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et
-					malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique
-					ullamcorper.
-				</p>
-			</div>
-			<div class="flex mt-5">
-				<button class="bg-accent text-white rounded-full w-1/2">Modifier</button>
-				<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5"
-					>Désactiver</button
-				>
-			</div>
-		</div>
-		<div class="w-1/3 flex justify-center items-center">
-			<button type="button" class="mr-4">
-				<img src="icons/Left_arrow.svg" alt="Précédent" />
+		<div class="w-full md:w-1/3 flex justify-center items-center">
+			<button type="button" class="mr-2 lg:mr-4">
+				<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
 			</button>
 			<img
 				src="corgi.png"
-				class="rounded-full h-64 shadow-[24px_-24px_#FFDB78] mt-6"
+				class="rounded-full h-40 lg:h-48 xl:h-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6"
 				alt="Profil animal"
 			/>
-			<button type="button" class="ml-8">
-				<img src="icons/Right_arrow.svg" alt="Suivant" />
+			<button type="button" class="ml-4 lg:ml-8">
+				<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant" />
 			</button>
-			<!-- <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                    <svg class="w-4 h-4 text-white dark:text-accent rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                    </svg>
-                    <span class="sr-only">Next</span>
-                </span>
-            </button> -->
 		</div>
 	</div>
 </div>
