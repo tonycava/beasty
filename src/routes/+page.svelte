@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
-	import { user } from '$auth/stores/UserStore';
 	import { LogoutUseCase } from '$auth/usecases/LogoutUser';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import Cookies from 'js-cookie';

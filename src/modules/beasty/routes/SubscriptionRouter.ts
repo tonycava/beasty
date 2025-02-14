@@ -22,6 +22,22 @@ export const SubscriptionRouter = t.router({
 	getCheckoutSession: authProcedure
 		.input(z.object({ tier: z.nativeEnum(SubscriptionTier) }))
 		.query(async ({ ctx, input }) => {
+			const customerList = await stripe.customers.list({
+				email: ctx.user.email,
+				limit: 1
+			});
+
+			let customerId = '';
+			// Checks the if the customer exists, if not creates a new customer
+			if (customerList.data.length !== 0) {
+				customerId = customerList.data[0].id;
+			} else {
+				const customer = await stripe.customers.create({
+					email: ctx.user.email
+				});
+				customerId = customer.id;
+			}
+
 			const session = await stripe.checkout.sessions.create({
 				line_items: [
 					{
@@ -29,7 +45,7 @@ export const SubscriptionRouter = t.router({
 						quantity: 1
 					}
 				],
-				customer_email: ctx.user.email,
+				customer: customerId,
 				payment_method_types: ['card'],
 				shipping_address_collection: {
 					allowed_countries: ['NO']

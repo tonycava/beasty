@@ -5,6 +5,12 @@ import { subscriptionTiers } from '$lib/data/subscriptionTiers';
 export const SQLiteSubscriptionUserRepository = (): ISQLiteSubscriptionUserRepository => {
 	return {
 		async deleteSubscription(data): Promise<void> {
+			const existingSubscription = await prisma.subscription.findUnique({
+				where: { stripeCustomerId: data.customerId },
+			});
+
+			if (!existingSubscription) return;
+
 			await prisma.subscription.update({
 				data: {
 					tier: subscriptionTiers.Free.name,
@@ -36,7 +42,6 @@ export const SQLiteSubscriptionUserRepository = (): ISQLiteSubscriptionUserRepos
 					stripeSubscriptionId: data.subscription.id,
 					stripeCustomerId: data.customerId,
 					tier: data.tier.name,
-					userId: data.userId,
 				},
 				create: {
 					stripeSubscriptionItemId: data.subscription.itemId,
