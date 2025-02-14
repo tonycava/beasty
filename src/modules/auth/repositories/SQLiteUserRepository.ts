@@ -6,6 +6,9 @@ type _SQLiteUserRepository = Omit<IUserRepository, 'getGoogleUserWithAccessToken
 
 export const SQLiteUserRepository = (): _SQLiteUserRepository => {
 	return {
+		getUserById(id: string): Promise<User | null> {
+			return prisma.user.findFirst({ where: { id } });
+		},
 		getApprenticeByEmail(email: string): Promise<User | null> {
 			return prisma.user.findFirst({ where: { email } });
 		},

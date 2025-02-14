@@ -14,7 +14,7 @@
 <button
 	{type}
 	{onclick}
-	class="font-space-mono rounded-md {variant === 'primary' ? 'text-accent border-2 border-primary' : 'border border-zinc-800 hover:bg-zinc-900/50'} {className}"
+	class="font-space-mono rounded-md {variant === 'primary' ? 'text-accent border-2 border-primary' : 'rounded-3xl bg-secondary text-white'} {className}"
 >
 	<!-- Insted of <slot /> -->
 	{@render children?.()}
