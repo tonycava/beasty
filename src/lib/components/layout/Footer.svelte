@@ -3,7 +3,6 @@
 	<div class="flex justify-around w-full">
 
 		<div class="flex gap-1 flex-col">
-			<a href="mailto:anthony@klio.fr" class="hover:underline">Nous Contacter</a>
 			<a href="/contact" class="hover:underline">Avez-vous des questions ?<br>N'hésitez pas à nous contacter !</a>
 		</div>
 		<div class="flex gap-2 flex-col">
