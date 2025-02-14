@@ -55,7 +55,11 @@
 	};
 </script>
 
-<Navbar connectionUrl={data.url} bind:sectionsView />
+<Navbar
+	connectionUrl={data.url}
+	bind:sectionsView
+	isHomePage={true}
+/>
 
 <div class="pt-32 bg-white z-20 h-32 w-full fixed"></div>
 
