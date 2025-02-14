@@ -1,7 +1,18 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition';
+	import { spring } from 'svelte/motion';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
+	import type { Tier } from '$lib/data/subscriptionTiers';
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+	const { paidTiers } = data;
+
+	const scale = spring(1, {
+		stiffness: 0.2,
+		damping: 0.4
+	});
 
 	let hoveredCard: string | null = null;
 
@@ -14,6 +25,47 @@
 	}
 
 	$: cardScale = (cardId: string) => hoveredCard === cardId ? 1.05 : 1;
+
+	function formatPrice(priceInCents: number) {
+		return (priceInCents / 100).toFixed(2);
+	}
+
+	function getCardStyle(tier: Tier) {
+		switch(tier.name) {
+			case 'Premium':
+				return 'bg-orange-100';
+			case 'Business':
+				return 'bg-teal-600 text-white md:col-span-2 lg:col-span-1 md:max-w-xl lg:max-w-none mx-auto w-full';
+			default:
+				return 'bg-white';
+		}
+	}
+
+	function getButtonStyle(tier: Tier) {
+		switch(tier.name) {
+			case 'Essentiel':
+				return 'bg-gray-50 text-black hover:bg-gray-100';
+			case 'Premium':
+				return 'bg-orange-500 text-white hover:bg-orange-600';
+			case 'Business':
+				return 'bg-white text-teal-600 hover:bg-teal-50';
+			default:
+				return 'bg-gray-50 text-black hover:bg-gray-100';
+		}
+	}
+
+	function getButtonText(tier: Tier) {
+		switch(tier.name) {
+			case 'Essentiel':
+				return 'Commencer';
+			case 'Premium':
+				return 'Devenir Premium';
+			case 'Business':
+				return 'Prendre l\'abonnement business';
+			default:
+				return 'Choisir';
+		}
+	}
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -28,157 +80,49 @@
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-				<div
-					role="button"
-					tabindex="0"
-					in:fly="{{ y: 50, duration: 1000, delay: 200 }}"
-					class="bg-white rounded-lg shadow-lg p-6 sm:p-8 transform transition-transform duration-300 relative"
-					style="transform: scale({cardScale('essentiel')})"
-					on:mouseenter={() => handleMouseEnter('essentiel')}
-					on:mouseleave={handleMouseLeave}
-				>
-					<div class="h-full flex flex-col">
-						<div class="flex-grow">
-							<h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Essentiel</h3>
-							<p class="text-gray-600 mb-3 sm:mb-4">Parfait pour commencer</p>
-							<p class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">9,99 €<span class="text-base sm:text-lg font-normal">/mois</span></p>
+				{#each paidTiers as tier, index}
+					<div
+						role="button"
+						tabindex="0"
+						in:fly="{{ y: 50, duration: 1000, delay: 200 * (index + 1) }}"
+						class="rounded-lg shadow-lg p-6 sm:p-8 transform transition-transform duration-300 relative {getCardStyle(tier)}"
+						style="transform: scale({cardScale(tier.name.toLowerCase())})"
+						on:mouseenter={() => handleMouseEnter(tier.name.toLowerCase())}
+						on:mouseleave={handleMouseLeave}
+					>
+						{#if tier.name === 'Premium'}
+							<div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+								<span class="bg-orange-500 text-white px-4 py-1 rounded-full text-xs sm:text-sm">Populaire</span>
+							</div>
+						{/if}
 
-							<ul class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Personnalisation basique du profil</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Jusqu'à 3 photos d'animaux</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">10 matchs par jour</span>
-								</li>
-							</ul>
+						<div class="h-full flex flex-col">
+							<div class="flex-grow">
+								<h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{tier.name}</h3>
+								<p class="{tier.name === 'Business' ? 'text-white' : 'text-gray-600'} mb-3 sm:mb-4">{tier.description}</p>
+								<p class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
+									{formatPrice(tier.priceInCents)} €<span class="text-base sm:text-lg font-normal">{tier.name === 'Business' ? ' /an' : ' /mois'}</span>
+								</p>
+
+								<ul class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+									{#each tier.features as feature}
+										<li class="flex items-center">
+											<svg class="w-5 h-5 {tier.name === 'Business' ? 'text-teal-200' : 'text-green-500'} mr-2 flex-shrink-0"
+													 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+											</svg>
+											<span class="text-sm sm:text-base">{feature}</span>
+										</li>
+									{/each}
+								</ul>
+							</div>
+
+							<button class="w-full {getButtonStyle(tier)} py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold transition-colors duration-300 mt-auto text-sm sm:text-base">
+								{getButtonText(tier)}
+							</button>
 						</div>
-
-						<button class="w-full bg-gray-50 text-black py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-300 mt-auto text-sm sm:text-base">
-							Commencer
-						</button>
 					</div>
-				</div>
-
-				<div
-					role="button"
-					tabindex="0"
-					in:fly="{{ y: 50, duration: 1000, delay: 400 }}"
-					class="bg-orange-100 rounded-lg shadow-lg p-6 sm:p-8 transform transition-transform duration-300 relative"
-					style="transform: scale({cardScale('premium')})"
-					on:mouseenter={() => handleMouseEnter('premium')}
-					on:mouseleave={handleMouseLeave}
-				>
-					<div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
-						<span class="bg-orange-500 text-white px-4 py-1 rounded-full text-xs sm:text-sm">Populaire</span>
-					</div>
-
-					<div class="h-full flex flex-col">
-						<div class="flex-grow">
-							<h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Premium</h3>
-							<p class="text-gray-600 mb-3 sm:mb-4">Idéal pour les passionnés d'animaux</p>
-							<p class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">19,99 €<span class="text-base sm:text-lg font-normal">/mois</span></p>
-
-							<ul class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Tous les avantages Essentiel</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Photos d'animaux illimitées</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Matchs illimités</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Filtres avancés</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Support prioritaire</span>
-								</li>
-							</ul>
-						</div>
-
-						<button class="w-full bg-orange-500 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-orange-600 transition-colors duration-300 mt-auto text-sm sm:text-base">
-							Devenir Premium
-						</button>
-					</div>
-				</div>
-
-				<div
-					role="button"
-					tabindex="0"
-					in:fly="{{ y: 50, duration: 1000, delay: 600 }}"
-					class="bg-teal-600 text-white rounded-lg shadow-lg p-6 sm:p-8 transform transition-transform duration-300 relative
-        md:col-span-2 lg:col-span-1 md:max-w-xl lg:max-w-none mx-auto w-full"
-					style="transform: scale({cardScale('pro')})"
-					on:mouseenter={() => handleMouseEnter('pro')}
-					on:mouseleave={handleMouseLeave}
-				>
-					<div class="h-full flex flex-col">
-						<div class="flex-grow">
-							<h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Professionnel</h3>
-							<p class="text-teal-100 mb-3 sm:mb-4">Pour les entreprises animalières</p>
-							<p class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">49,99 €<span class="text-base sm:text-lg font-normal">/mois</span></p>
-
-							<ul class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-teal-200 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Tous les avantages Premium</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-teal-200 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Badge professionnel</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-teal-200 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Annonces mises en avant</span>
-								</li>
-								<li class="flex items-center">
-									<svg class="w-5 h-5 text-teal-200 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span class="text-sm sm:text-base">Tableau de bord analytique</span>
-								</li>
-							</ul>
-						</div>
-
-						<button class="w-full bg-white text-teal-600 py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-semibold hover:bg-teal-50 transition-colors duration-300 mt-auto text-sm sm:text-base">
-							Prendre l'abonnement
-						</button>
-					</div>
-				</div>
+				{/each}
 			</div>
 		</div>
 	</main>
