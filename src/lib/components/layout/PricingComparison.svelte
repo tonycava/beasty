@@ -23,7 +23,7 @@
 				</th>
 				<th class="p-4 text-center">
 					<div class="flex flex-col items-center gap-2">
-						<span class="font-normal text-orange-400">Professionnel</span>
+						<span class="font-normal text-orange-400">Business</span>
 					</div>
 				</th>
 			</tr>
