@@ -1,13 +1,13 @@
-import { subscriptionTiers } from '$lib/data/subscriptionTiers';
+import { subscriptionTiers, subscriptionTiersInOrder } from '$lib/data/subscriptionTiers';
+import type { PageServerLoad } from './$types';
+import { trpc } from '$lib/clients/client';
 
-export const load = async () => {
-	const paidTiers = [
-		subscriptionTiers.Essentiel,
-		subscriptionTiers.Premium,
-		subscriptionTiers.Business
-	];
+export const load: PageServerLoad = async (event) => {
+	const userSubscriptionTier = await trpc(event).subscriptionRouter.getTier.query();
 
+	console.log(userSubscriptionTier);
 	return {
-		paidTiers
+		userSubscriptionTier,
+		paidTiers: subscriptionTiersInOrder.filter((tier) => tier !== subscriptionTiers.Free),
 	};
 };

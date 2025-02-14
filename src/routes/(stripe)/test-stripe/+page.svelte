@@ -10,11 +10,7 @@
 				items: [],
 			}),
 		}).then((data) => data.json());
-		if (data.error) {
-			alert(data.error);
-			return;
-		}
-		window.location.replace(data.url);
+
 	}
 </script>
 
