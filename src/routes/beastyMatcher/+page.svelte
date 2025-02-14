@@ -5,6 +5,7 @@
 	import { user } from '$auth/stores/UserStore';
 	import type { Animal } from '../../modules/matcher/entities/Animal';
 	import { trpc } from '$lib/clients/client';
+	import { array } from 'zod';
 
 	let animals: Animal[] = [];
 	let selectedAnimal: Animal | null = null;
@@ -16,6 +17,11 @@
 	onMount(async () => {
 		try {
 			const data = await trpc().matcherRouter.getMatcher.query($user?.id!);
+			console.log('Données récupérées avec succès', {
+				nombreAnimaux: data.animals.length,
+				animaux: data.animals,
+				selectedAnimal: data.selectedAnimal
+			});
 			animals = data.animals;
 			selectedAnimal = data.selectedAnimal;
 		} catch (error) {
@@ -50,123 +56,197 @@
 			isAnimating = false;
 		}, 500);
 	}
+
+	// Générer un style unique pour chaque carte en arrière-plan
+	function getCardStyle(index: number, totalCards: number) {
+		// Si c'est la dernière carte disponible
+		if (totalCards === 1 && index === 0) {
+			return ''; // Pas de rotation ni de décalage
+		}
+
+		// Si c'est la carte du haut
+		if (index === totalCards - 1) {
+			return '';
+		}
+
+		const rotation = (index - (totalCards - 1)) * 5;
+		const translateY = (index - (totalCards - 1)) * 10;
+		const scale = 1 - (index - (totalCards - 1)) * 0.05;
+
+		return `transform: rotate(${rotation}deg) translateY(${translateY}px) scale(${scale});`;
+	}
 </script>
 
-<!-- Carte principale -->
+<!-- Conteneur principal -->
 <div class="flex h-screen w-screen items-center justify-center">
 	<div class="relative h-[550px] w-[950px] rounded-[10px] border border-black bg-[#FFF0C8] p-5">
-		{#if animals[currentAnimalIndex]}
-			<div
-				class="card-anim {direction === 'left'
-					? 'left'
-					: direction === 'right'
-						? 'right'
-						: ''} relative h-[450px] w-[850px] rounded-[10px] border border-gray bg-[#FFF0C8] p-5"
-				class:left={isAnimating && direction === 'left'}
-				class:right={isAnimating && direction === 'right'}
-				style="left: 25px; top: 25px;"
-			>
-				<!-- Section cadre -->
-				<div
-					class="flex h-[400px] w-[336px] flex-col items-center justify-start rounded-[10px] bg-[#3B7080] p-6"
-				>
-					<div class="mb-2 h-[275px] w-[275px] bg-gray-300"></div>
-					<div class="my-4 h-[2px] w-full bg-white"></div>
-					<div
-						class="flex justify-center text-white"
-						style="font-family: 'Poppins', sans-serif; font-size: 30px;"
-					>
-						<div class="mr-2">{animals[currentAnimalIndex]?.firstName}</div>
-						<div>{animals[currentAnimalIndex]?.birthday}</div>
-					</div>
-				</div>
-
-				<!-- Section description -->
-				<div
-					class="description-container absolute flex flex-col justify-start p-6 border border-gray-400 rounded-[10px] shadow-lg animate-fade-in"
-					style="left: 400px; top: 25px; background-color: #f5f5f5; width: 50%;"
-				>
-					<div
-						class="font-semibold text-[#FF9F63]"
-						style="font-family: 'Poppins', sans-serif; font-size: 17px;"
-					>
-						Description :
-					</div>
-					<div class="mt-4 text-black" style="font-family: 'Poppins', sans-serif; font-size: 15px;">
-						{animals[currentAnimalIndex]?.bio}
-					</div>
-					<div class="mx-auto my-8 h-[1px] w-3/4 bg-black"></div>
-					<ul class="text-black" style="font-family: 'Poppins', sans-serif; font-size: 20px;">
-						<li class="grid grid-cols-2">
-							<span class="font-semibold text-[#FF9F63]">Anniversaire :</span>
-							<span>{animals[currentAnimalIndex]?.birthday || 'Non défini'}</span>
-						</li>
-						<li class="grid grid-cols-2">
-							<span class="font-semibold text-[#FF9F63]">Espèce :</span>
-							<span>{animals[currentAnimalIndex]?.species || 'Non défini'}</span>
-						</li>
-						<li class="grid grid-cols-2">
-							<span class="font-semibold text-[#FF9F63]">Race :</span>
-							<span>{animals[currentAnimalIndex]?.breed || 'Non défini'}</span>
-						</li>
-						<li class="grid grid-cols-2">
-							<span class="font-semibold text-[#FF9F63]">Sexe :</span>
-							<span>{animals[currentAnimalIndex]?.sex || 'Non défini'}</span>
-						</li>
-					</ul>
-				</div>
-
-				<!-- Section boutons sous description-->
-				<div class="absolute bottom-6 right-6 flex gap-5">
-					<button
-						on:click={() => handleAction('accepted')}
-						class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#3B7080]"
-						aria-label="Match"
-					>
-						<div class="flex h-[50px] w-[50px] items-center justify-center bg-green-300"></div>
-					</button>
-					<button
-						on:click={() => handleAction('rejected')}
-						class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#FF9F63]"
-						aria-label="Reject"
-					>
-						<div class="flex h-[50px] w-[50px] items-center justify-center bg-red-300"></div>
-					</button>
-				</div>
+		{#if animals.length === 0}
+			<div class="flex h-full items-center justify-center">
+				<p class="text-xl">Aucun animal disponible</p>
 			</div>
+		{:else}
+		{#each animals
+			.slice(currentAnimalIndex, currentAnimalIndex + Math.min(3, animals.length - currentAnimalIndex))
+			as animal, index (animal.id)}
+			<div
+				class="card {index === 0 ? 'top-card' : ''}"
+				class:left={isAnimating && direction === 'left' && index === 0}
+				class:right={isAnimating && direction === 'right' && index === 0}
+				style={getCardStyle(index, Math.min(3, animals.length - currentAnimalIndex))}
+			>
+				{#if index === 0}
+						<div class="info">
+							<div class="image"></div>
+							<div class="divider"></div>
+							<div class="details">
+								<div class="name">{animal.firstName}</div>
+								<div>{animal.birthday}</div>
+							</div>
+						</div>
+
+						<!-- Description -->
+						<div class="description">
+							<div class="title">Description :</div>
+							<div class="text">{animal.bio}</div>
+							<div class="divider"></div>
+							<ul class="list">
+								<li><span>Anniversaire :</span> {animal.birthday || 'Non défini'}</li>
+								<li><span>Espèce :</span> {animal.species || 'Non défini'}</li>
+								<li><span>Race :</span> {animal.breed || 'Non défini'}</li>
+								<li><span>Sexe :</span> {animal.sex || 'Non défini'}</li>
+							</ul>
+						</div>
+
+						<!-- Boutons de validation -->
+						<div class="buttons">
+							<button
+								on:click={() => handleAction('accepted')}
+								class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#3B7080]"
+								aria-label="Match"
+							>
+								<div class="flex h-[50px] w-[50px] items-center justify-center bg-green-300"></div>
+							</button>
+							<button
+								on:click={() => handleAction('rejected')}
+								class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#FF9F63]"
+								aria-label="Reject"
+							>
+								<div class="flex h-[50px] w-[50px] items-center justify-center bg-red-300"></div>
+							</button>
+						</div>
+					{/if}
+				</div>
+			{/each}
 		{/if}
 	</div>
 </div>
 
 <style>
-	.card-anim {
+	.card {
+		position: absolute;
+		width: 850px;
+		height: 450px;
+		border-radius: 10px;
+		border: 2px solid gray;
+		background-color: #fff0c8;
+		padding: 20px;
 		transition:
 			transform 0.5s,
 			opacity 0.5s;
-		position: absolute;
 	}
-	.card-anim.left {
+
+	/* 🎭 Animation de départ */
+	.card.left {
 		transform: translateX(-1000px) rotate(-45deg);
 		opacity: 0;
 	}
-	.card-anim.right {
+
+	.card.right {
 		transform: translateX(1000px) rotate(45deg);
 		opacity: 0;
 	}
-	.description-container {
-		transition: all 0.3s ease-in-out;
+
+	/* ✅ Carte principale */
+	.top-card {
+		z-index: 10;
 	}
-	@keyframes fade-in {
-		from {
-			opacity: 0;
-			transform: scale(0.9);
-		}
-		to {
-			opacity: 1;
-			transform: scale(1);
-		}
+
+	.info {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: start;
+		width: 336px;
+		height: 400px;
+		background-color: #3b7080;
+		border-radius: 10px;
+		padding: 20px;
 	}
-	.animate-fade-in {
-		animation: fade-in 0.3s ease-in-out;
+
+	.image {
+		width: 275px;
+		height: 275px;
+		background-color: gray;
+		margin-bottom: 10px;
+	}
+
+	.divider {
+		width: 100%;
+		height: 2px;
+		background-color: white;
+		margin: 10px 0;
+	}
+
+	.details {
+		color: white;
+		font-family: 'Poppins', sans-serif;
+		font-size: 30px;
+		text-align: center;
+	}
+
+	.description {
+		position: absolute;
+		left: 400px;
+		top: 25px;
+		width: 50%;
+		background-color: #f5f5f5;
+		border-radius: 10px;
+		padding: 20px;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	}
+
+	.title {
+		font-weight: bold;
+		color: #ff9f63;
+		font-size: 17px;
+	}
+
+	.text {
+		margin-top: 10px;
+		font-size: 15px;
+	}
+
+	.list {
+		margin-top: 10px;
+		font-size: 20px;
+	}
+
+	.list li {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 5px;
+	}
+
+	.list span {
+		font-weight: bold;
+		color: #ff9f63;
+	}
+
+	.buttons {
+		position: absolute;
+		bottom: 10px;
+		right: 10px;
+		display: flex;
+		gap: 10px;
 	}
 </style>
