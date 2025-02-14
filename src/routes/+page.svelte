@@ -62,9 +62,7 @@
 
 <Header />
 
-<HomeBeasty/>
 
-<HomeTryIt/>
 
 <div
 		style="height: 2000px"
@@ -73,7 +71,8 @@
 			changeSection('beasty');
 		}}
 	>
-		<span> Beasty </span>
+	<HomeBeasty/>
+
 	</div>
 
 	<div
@@ -83,7 +82,7 @@
 			changeSection('tryIt');
 		}}
 	>
-		<span> tryIt </span>
+	<HomeTryIt/>
 	</div>
 
 	<div
