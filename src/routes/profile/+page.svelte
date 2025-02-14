@@ -54,11 +54,7 @@
                 </div>
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="age">Âge :</label>
-                    {#if ((month > Number((userProfile.birthday.split('/'))[1]) || year > Number((userProfile.birthday.split('/'))[2])) || (day >= Number((userProfile.birthday.split('/'))[0])) && (month = Number((userProfile.birthday.split('/'))[1])))}
-                        <p class="w-3/4 ml-2" id="age"> {(year-Number((userProfile.birthday.split('/'))[2]))} ans</p>
-                    {:else}
-                        <p class="w-3/4 ml-2" id="age"> {(year-Number((userProfile.birthday.split('/'))[2]))-1} ans</p>
-                    {/if}
+					<p class="w-3/4 ml-2" id="age">{Math.abs((new Date(Date.now() - (new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0]))).getTime()).getUTCFullYear()) - 1970)}</p>
                 </div>
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="birthday">Anniversaire :</label>
