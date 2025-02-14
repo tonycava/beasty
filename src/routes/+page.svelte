@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
-	import { user } from '$auth/stores/UserStore';
 	import { LogoutUseCase } from '$auth/usecases/LogoutUser';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import Cookies from 'js-cookie';
@@ -55,7 +54,11 @@
 	};
 </script>
 
-<Navbar connectionUrl={data.url} bind:sectionsView />
+<Navbar
+	connectionUrl={data.url}
+	bind:sectionsView
+	isHomePage={true}
+/>
 
 <div class="pt-32 bg-white z-20 h-32 w-full fixed"></div>
 
