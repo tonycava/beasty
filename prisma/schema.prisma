@@ -22,9 +22,9 @@ model User {
   profilePicture String
 
   birthday String
-  bio String @default("")
+  bio      String @default("")
 
-  subscription   Subscription?
+  subscription Subscription?
 }
 
 model Subscription {
@@ -34,7 +34,7 @@ model Subscription {
 
   stripeSubscriptionItemId String
   stripeSubscriptionId     String
-  stripeCustomerId         String
+  stripeCustomerId         String @unique
   tier                     String
 
   user   User   @relation(fields: [userId], references: [id])
@@ -42,22 +42,22 @@ model Subscription {
 }
 
 model Animal {
-  id            String   @id @default(uuid())
-  name          String
-  gender        String
-  birthdate     DateTime
-  species       String
-  biography     String
-  weight        Float?
-  breed         String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-  photos        Photo[]
+  id        String   @id @default(uuid())
+  name      String
+  gender    String
+  birthdate DateTime
+  species   String
+  biography String
+  weight    Float?
+  breed     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  photos    Photo[]
 }
 
 model Photo {
-  id        String   @id @default(uuid())
-  url       String
-  animalId  String
-  animal    Animal   @relation(fields: [animalId], references: [id])
+  id       String @id @default(uuid())
+  url      String
+  animalId String
+  animal   Animal @relation(fields: [animalId], references: [id])
 }

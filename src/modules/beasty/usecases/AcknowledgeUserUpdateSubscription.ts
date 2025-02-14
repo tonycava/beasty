@@ -5,25 +5,27 @@ import {
 	UseCaseResponseBuilder
 } from '$lib/interfaces/UseCase';
 import type { UserSubscriptionAcknoledgement } from '../interfaces/dto/UserSubscriptionAcknoledgement';
-import type { ISQLiteSubscriptionUserCreateSubscription } from '../interfaces/ISQLiteSubscriptionUserRepository';
+import type {
+	ISQLiteSubscriptionUserUpdateSubscription
+} from '../interfaces/ISQLiteSubscriptionUserRepository';
 
 type Input = InputFactory<
-	UserSubscriptionAcknoledgement,
+	Pick<UserSubscriptionAcknoledgement, "tier" | "customerId">,
 	{
-		userRepository: ISQLiteSubscriptionUserCreateSubscription;
+		userRepository: ISQLiteSubscriptionUserUpdateSubscription;
 	}
 >;
 
 type Output = OutputFactory<string>;
 
-export const AcknowledgeUserSubscriptionUseCase: UseCase<Input, Output> = (dependencies) => {
+export const AcknowledgeUserUpdateSubscriptionUseCase: UseCase<Input, Output> = (dependencies) => {
 	const { userRepository } = dependencies;
 	return {
 		async execute(data): Promise<Output> {
-			console.log('AcknowledgeUserSubscriptionUseCase data', data);
 
+			console.log('AcknowledgeUserUpdateSubscriptionUseCase data', data);
 			try {
-				await userRepository.createSubscription(data);
+				await userRepository.updateSubscription(data);
 				return UseCaseResponseBuilder.success(200, 'Success');
 			} catch (err) {
 				console.error('Error :', err);
