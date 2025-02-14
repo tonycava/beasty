@@ -20,8 +20,13 @@ export type IUserRepositoryGetByEmail = {
 	getApprenticeByEmail(email: string): Promise<User | null>;
 };
 
+export type IUserRepositoryGetUserById = {
+	getUserById(id: string): Promise<User | null>;
+};
+
 export type IUserRepository = IUserRepositoryCreateUser &
 	IUserRepositoryGetByAccessToken &
 	IUserRepositoryGetById &
 	IUserRepositoryGetByEmail &
-	IUserRepositoryGetUser;
+	IUserRepositoryGetUser &
+	IUserRepositoryGetUserById;
