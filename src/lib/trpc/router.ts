@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { GetUserInfoUseCase } from '../../modules/profile/usescases/GetUserInfoUseCase';
 import { SQLiteUserProfileRepository } from '../../modules/profile/repositories/SQLiteUserProfileRepository';
 import { matcherRouter } from '../../modules/matcher/routes/MatcherRoute';
+import { AuthRouter } from '$auth/routes/AuthRouter';
 
 export const router = t.router({
 	matcherRouter,
@@ -21,6 +22,10 @@ export const router = t.router({
 		}
 		return null;
 	})
+	greeting: t.procedure.query(async () => {
+		return `Hello tRPC v10 @ ${new Date().toLocaleTimeString()}`;
+	}),
+	authRouter: AuthRouter
 });
 
 export type Router = typeof router;

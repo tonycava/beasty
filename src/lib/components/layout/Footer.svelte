@@ -1,4 +1,4 @@
-<footer class="w-full bg-accent bg-opacity-80 fixed bottom-0 p-4 text-white font-dm-sans">
+<footer class="w-full bg-accent bg-opacity-80 bottom-0 p-4 text-white font-dm-sans h-28 flex z-50">
 
 	<div class="flex justify-around w-full">
 
