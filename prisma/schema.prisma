@@ -11,19 +11,34 @@ datasource db {
 }
 
 model User {
-  id               String    @id @default(uuid())
-  googleUserId     String    @unique
-  firstName        String    @default("")
-  lastName         String    @default("")
-  email            String    @unique
-  profilePicture   String    @default("")
-  birthday         String    @default("")
-  bio              String    @default("")
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id               String        @id @default(uuid())
+  googleUserId     String        @unique
+  firstName        String        @default("")
+  lastName         String        @default("")
+  email            String        @unique
+  profilePicture   String        @default("")
+  birthday         String        @default("")
+  bio              String        @default("")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
   animals          Animal[]
-  sentMessages     Message[] @relation("SentMessages")
-  receivedMessages Message[] @relation("ReceivedMessages")
+  sentMessages     Message[]     @relation("SentMessages")
+  receivedMessages Message[]     @relation("ReceivedMessages")
+  subscription     Subscription?
+}
+
+model Subscription {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  stripeSubscriptionItemId String
+  stripeSubscriptionId     String
+  stripeCustomerId         String @unique
+  tier                     String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
 }
 
 model Animal {
@@ -42,7 +57,6 @@ model Animal {
   initiatedMatches Match[]  @relation("InitiatedMatches")
   receivedMatches  Match[]  @relation("ReceivedMatches")
 }
-
 
 model Message {
   id         String   @id @default(uuid())
@@ -65,7 +79,6 @@ model Match {
   animalInitiator   Animal   @relation("InitiatedMatches", fields: [animalInitiatorId], references: [id])
   animalMatched     Animal   @relation("ReceivedMatches", fields: [animalMatchedId], references: [id])
 }
-
 
 model Image {
   id        String   @id @default(uuid())

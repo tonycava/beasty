@@ -13,7 +13,10 @@ export type Animal = {
 	sex: string;
 	bio: string;
 	userId: string;
-	images: Image[];
 };
+
+export type AnimalItem = Animal & {
+	images: Image[];
+}
 
 export type AnimalWithoutId = Omit<Animal, 'id' | 'createdAt' | 'updatedAt'>;

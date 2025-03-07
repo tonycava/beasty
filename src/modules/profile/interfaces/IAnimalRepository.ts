@@ -1,20 +1,20 @@
-import type { Animal } from '../entities/Animal';
+import type { Animal, AnimalItem } from '../entities/Animal';
 import type { AnimalDto } from '../dto/AnimalDto';
 
 export type IAnimalRepositoryCreateAnimal = {
-	createAnimal(animal: AnimalDto): Promise<Animal>;
+	createAnimal(animal: AnimalDto): Promise<AnimalItem>;
 };
 
 export type IAnimalRepositoryGetAnimal = {
-	getAnimal(animalId: string): Promise<Animal | null>;
+	getAnimal(animalId: string): Promise<AnimalItem | null>;
 };
 
 export type IAnimalRepositoryGetAnimalsByUser = {
-	getAnimalsByUser(userId: string): Promise<Animal[]>;
+	getAnimalsByUser(userId: string): Promise<AnimalItem[]>;
 };
 
 export type IAnimalRepositoryUpdateAnimal = {
-	updateAnimal(animal: Animal): Promise<void>;
+	updateAnimal(animal: AnimalItem): Promise<void>;
 };
 
 export type IAnimalRepositoryDeleteAnimal = {

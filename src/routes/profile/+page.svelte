@@ -5,12 +5,16 @@
 	import { onMount } from 'svelte';
 	import type { User } from '../../modules/profile/entities/User';
 	import AnimalModal from '$lib/components/layout/AnimalModal.svelte';
+	import type { AnimalDto } from '../../modules/profile/dto/AnimalDto';
 
 	let userProfile = $state<User | null>(null);
+	let animals = $state<any[]>([]);
 	let now = $state(new Date());
 	let year = $state(0);
 	let month = $state(0);
 	let day = $state(0);
+	let isLoading = $state(false);
+	let error = $state<string | null>(null);
 
 	const formatter = new Intl.DateTimeFormat('fr-FR', {
 		year: 'numeric',
@@ -28,11 +32,40 @@
 		isAnimalModalOpen = false;
 	}
 
-	function saveAnimal(event: CustomEvent) {
-		const animal = event.detail;
-		console.log('Animal à sauvegarder:', animal);
+	async function saveAnimal(event: CustomEvent<AnimalDto>) {
+		try {
+			isLoading = true;
+			error = null;
+			const animalData = event.detail;
+			console.log('Animal à sauvegarder:', animalData);
 
-		closeAnimalModal();
+			const result = await trpc($page).createAnimal.mutate(animalData);
+
+			if (result.status === 'error') {
+				throw new Error(result.message);
+			}
+
+			await loadAnimals();
+
+			closeAnimalModal();
+		} catch (err: any) {
+			error = err.message || "Une erreur est survenue lors de la création de l'animal";
+			console.error('Erreur lors de la sauvegarde:', err);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function loadAnimals() {
+		try {
+			if (!$user?.id) return;
+			const result = await trpc($page).getAnimalsByUser.query($user.id);
+			if (result.status === 'success') {
+				animals = result.data;
+			}
+		} catch (err) {
+			console.error('Erreur lors du chargement des animaux:', err);
+		}
 	}
 
 	onMount(async () => {
@@ -182,6 +215,7 @@
 </div>
 
 <AnimalModal
+	canClose
 	bind:isOpen={isAnimalModalOpen}
 	on:close={closeAnimalModal}
 	on:save={saveAnimal}
