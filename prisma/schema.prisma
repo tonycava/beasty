@@ -11,53 +11,67 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  googleUserId String
-  firstName    String
-  lastName     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-
-  email          String
-  profilePicture String
-
-  birthday String
-  bio      String @default("")
-
-  subscription Subscription?
-}
-
-model Subscription {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  stripeSubscriptionItemId String
-  stripeSubscriptionId     String
-  stripeCustomerId         String @unique
-  tier                     String
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  id               String    @id @default(uuid())
+  googleUserId     String    @unique
+  firstName        String    @default("")
+  lastName         String    @default("")
+  email            String    @unique
+  profilePicture   String    @default("")
+  birthday         String    @default("")
+  bio              String    @default("")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  animals          Animal[]
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Animal {
-  id        String   @id @default(uuid())
-  name      String
-  gender    String
-  birthdate DateTime
-  species   String
-  biography String
-  weight    Float?
-  breed     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  photos    Photo[]
+  id               String   @id @default(uuid())
+  firstName        String   @default("")
+  birthday         String   @default("")
+  species          String   @default("")
+  breed            String   @default("")
+  sex              String   @default("")
+  bio              String   @default("")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  images           Image[]
+  initiatedMatches Match[]  @relation("InitiatedMatches")
+  receivedMatches  Match[]  @relation("ReceivedMatches")
 }
 
-model Photo {
-  id       String @id @default(uuid())
-  url      String
-  animalId String
-  animal   Animal @relation(fields: [animalId], references: [id])
+
+model Message {
+  id         String   @id @default(uuid())
+  content    String   @default("")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  senderId   String
+  receiverId String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model Match {
+  id                String   @id @default(uuid())
+  status            String   @default("pending")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  animalInitiatorId String
+  animalMatchedId   String
+  animalInitiator   Animal   @relation("InitiatedMatches", fields: [animalInitiatorId], references: [id])
+  animalMatched     Animal   @relation("ReceivedMatches", fields: [animalMatchedId], references: [id])
+}
+
+
+model Image {
+  id        String   @id @default(uuid())
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  animalId  String
+  animal    Animal   @relation(fields: [animalId], references: [id])
 }
