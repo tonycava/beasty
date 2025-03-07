@@ -28,8 +28,26 @@
 	});
 
 	function edit(){
-		console.log(document.getElementById("bio")?.innerHTML);
+		document.getElementById("btn_edit")?.classList.add("hidden");
+		document.getElementById("btn_save")?.classList.remove("hidden");
+		// document.getElementById("btn_add")?.setAttribute("disabled", "disabled");;
+		// document.getElementById("btn_delete")?.setAttribute("disabled", "disabled");
 
+		const p = document.getElementById("bio");
+		const bio = document.getElementById("bio")?.innerHTML;
+		let textarea = "<textarea type='text' class='border border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1'>"+bio+"</textarea>"
+
+		p.innerHTML = "";
+		p.insertAdjacentHTML("afterbegin", textarea);
+	}
+
+	function save(){
+		const newBio = document.querySelector("textarea")?.value;
+		const p = document.getElementById("bio");
+		p.innerHTML = String(newBio);
+
+		document.getElementById("btn_save")?.classList.add("hidden");
+		document.getElementById("btn_edit")?.classList.remove("hidden");
 	}
 
 </script>
@@ -86,9 +104,10 @@
 					</div>
 				</div>
 				<div class="w-full lg:w-2/5 flex flex-col justify-center items-center mt-5 md:mt-0">
-					<button class="bg-accent text-white rounded-full w-3/5 mb-2" on:click={edit}>Modifier</button>
-					<button class="bg-accent text-white rounded-full w-3/5 mb-2">Ajouter un animal</button>
-					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2">Supprimer le compte</button>
+					<button class="bg-accent text-white rounded-full w-3/5 mb-2" on:click={edit} id="btn_edit">Modifier</button>
+					<button class="bg-accent text-white rounded-full w-3/5 mb-2 hidden" on:click={save} id="btn_save">Sauvegarder</button>
+					<button class="bg-accent text-white rounded-full w-3/5 mb-2" id="btn_add">Ajouter un animal</button>
+					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2" id="btn_delete">Supprimer le compte</button>
 				</div>
 			</div>
         {/if}
