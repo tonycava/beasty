@@ -19,6 +19,62 @@ export const SubscriptionRouter = t.router({
 		if (!userSubscription) return SubscriptionTier.Free;
 		return SubscriptionTierUtil.fromString(userSubscription.tier);
 	}),
+	getCancelationDate: publicProcedure.query(async ({ ctx }) => {
+		if (!ctx.user) return null;
+
+		const userSubscription = await prisma.subscription.findFirst({
+			select: { stripeCancelAtPeriodEnd: true },
+			where: { userId: ctx.user.id }
+		});
+
+		if (!userSubscription?.stripeCancelAtPeriodEnd) return null;
+
+		return userSubscription.stripeCancelAtPeriodEnd;
+	}),
+	createCustomerPortalSession: authProcedure.query(async ({ ctx }) => {
+		const userSubscription = await prisma.subscription.findFirst({
+			select: { stripeCustomerId: true },
+			where: { userId: ctx.user.id }
+		});
+
+		if (!userSubscription) return null;
+
+		const portalSession = await stripe.billingPortal.sessions.create({
+			customer: userSubscription.stripeCustomerId,
+			return_url: `${env.BASE}/premium`
+		});
+
+		return portalSession.url;
+	}),
+	getSubscriptionUpgradeSession: authProcedure
+		.input(z.object({ tier: z.nativeEnum(SubscriptionTier) }))
+		.query(async ({ ctx, input }) => {
+			const userSubscription = await prisma.subscription.findFirst({
+				where: { userId: ctx.user.id }
+			});
+
+			if (!userSubscription) return null;
+
+			const portalSession = await stripe.billingPortal.sessions.create({
+				customer: userSubscription.stripeCustomerId,
+				return_url: `${env.BASE}/premium`,
+				flow_data: {
+					type: 'subscription_update_confirm',
+					subscription_update_confirm: {
+						subscription: userSubscription.stripeSubscriptionId,
+						items: [
+							{
+								id: userSubscription.stripeSubscriptionItemId,
+								price: subscriptionTiers[input.tier].stripePriceId!,
+								quantity: 1
+							}
+						]
+					}
+				}
+			});
+
+			return portalSession.url;
+		}),
 	getCheckoutSession: authProcedure
 		.input(z.object({ tier: z.nativeEnum(SubscriptionTier) }))
 		.query(async ({ ctx, input }) => {
@@ -59,8 +115,8 @@ export const SubscriptionRouter = t.router({
 					id: ctx.user.id
 				},
 				mode: 'subscription',
-				success_url: `${env.BASE}/`,
-				cancel_url: `${env.BASE}/`,
+				success_url: `${env.BASE}/premium`,
+				cancel_url: `${env.BASE}/premium`,
 				phone_number_collection: {
 					enabled: true
 				}

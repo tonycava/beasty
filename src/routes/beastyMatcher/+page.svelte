@@ -5,6 +5,7 @@
 	import { user } from '$auth/stores/UserStore';
 	import type { Animal } from '../../modules/matcher/entities/Animal';
 	import { trpc } from '$lib/clients/client';
+	import { array } from 'zod';
 
 	let animals: Animal[] = [];
 	let selectedAnimal: Animal | null = null;
@@ -33,17 +34,9 @@
 		if (isAnimating || !selectedAnimal || !animals[currentAnimalIndex]) return;
 
 		isAnimating = true;
-		direction = action === 'accepted' ? 'left' : 'right';
+		direction = action === 'accepted' ? 'right' : 'left';
 
 		const animalMatched = animals[currentAnimalIndex];
-
-		// Ajouter un effet de brouillard
-		const fogClass = action === 'accepted' ? 'fog-green' : 'fog-red';
-		document.body.classList.add(fogClass); // Appliquer le brouillard au body
-
-		// Animation de la carte
-		const card = document.querySelector('.top-card');
-		card?.classList.add('animate-out');
 
 		try {
 			await trpc().matcherRouter.createMatch.mutate({
@@ -61,9 +54,7 @@
 		setTimeout(() => {
 			currentAnimalIndex++;
 			isAnimating = false;
-			document.body.classList.remove(fogClass); // Retirer l'effet de brouillard
-			card?.classList.remove('animate-out'); // Retirer l'animation
-		}, 2000); // Durée de l'animation
+		}, 500);
 	}
 
 	// Générer un style unique pour chaque carte en arrière-plan
@@ -73,40 +64,40 @@
 			return ''; // Pas de rotation ni de décalage
 		}
 
-		// Si c'est la première carte (celle avec les infos)
-		if (index === 0) {
-			return 'transform: rotate(0deg);'; // Carte principale horizontale
+		// Si c'est la carte du haut
+		if (index === totalCards - 1) {
+			return '';
 		}
 
-		const translateY = (index - (totalCards - 1)) * 20; // Augmenter le décalage vertical
-		const rotation = (index % 2 === 0 ? 10 : -10); // Rotation alternée entre 10 et -10 degrés
+		const rotation = (index - (totalCards - 1)) * 5;
+		const translateY = (index - (totalCards - 1)) * 10;
+		const scale = 1 - (index - (totalCards - 1)) * 0.05;
 
-		return `transform: translateY(${translateY}px) rotate(${rotation}deg);`; // Appliquer la rotation
+		return `transform: rotate(${rotation}deg) translateY(${translateY}px) scale(${scale});`;
 	}
 </script>
 
 <!-- Conteneur principal -->
 <div class="flex h-screen w-screen items-center justify-center">
-	<div class="relative h-[550px] w-[950px]">
+	<div class="relative h-[550px] w-[950px] rounded-[10px] border border-black bg-[#FFF0C8] p-5">
 		{#if animals.length === 0}
-			<!-- carte vide -->
 			<div class="flex h-full items-center justify-center">
 				<p class="text-xl">Aucun animal disponible</p>
 			</div>
 		{:else}
 		{#each animals
-			.slice(currentAnimalIndex, currentAnimalIndex + Math.min(4, animals.length - currentAnimalIndex))
+			.slice(currentAnimalIndex, currentAnimalIndex + Math.min(3, animals.length - currentAnimalIndex))
 			as animal, index (animal.id)}
-			<!-- Carte animale -->
 			<div
 				class="card {index === 0 ? 'top-card' : ''}"
 				class:left={isAnimating && direction === 'left' && index === 0}
 				class:right={isAnimating && direction === 'right' && index === 0}
-				style={getCardStyle(index, Math.min(4, animals.length - currentAnimalIndex))}
+				style={getCardStyle(index, Math.min(3, animals.length - currentAnimalIndex))}
 			>
 				{#if index === 0}
-						<div class="info" style="flex-direction: row;">
+						<div class="info">
 							<div class="image"></div>
+							<div class="divider"></div>
 							<div class="details">
 								<div class="name">{animal.firstName}</div>
 								<div>{animal.birthday}</div>
@@ -257,30 +248,5 @@
 		right: 10px;
 		display: flex;
 		gap: 10px;
-	}
-
-	/* Ajouter les styles pour le brouillard */
-	body.fog-green {
-		background: rgba(0, 255, 0, 0.5); /* Brouillard vert */
-		transition: background 0.5s ease;
-	}
-
-	body.fog-red {
-		background: rgba(255, 0, 0, 0.5); /* Brouillard rouge */
-		transition: background 0.5s ease;
-	}
-
-	.card.animate-out {
-		transition: transform 2s ease, opacity 2s ease;
-	}
-
-	.card.left.animate-out {
-		transform: translateX(-100vw) rotate(-45deg);
-		opacity: 0;
-	}
-
-	.card.right.animate-out {
-		transform: translateX(100vw) rotate(45deg);
-		opacity: 0;
 	}
 </style>

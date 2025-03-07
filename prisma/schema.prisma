@@ -34,7 +34,8 @@ model Subscription {
 
   stripeSubscriptionItemId String
   stripeSubscriptionId     String
-  stripeCustomerId         String @unique
+  stripeCustomerId         String    @unique
+  stripeCancelAtPeriodEnd  DateTime?
   tier                     String
 
   user   User   @relation(fields: [userId], references: [id])
