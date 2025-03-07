@@ -50,6 +50,14 @@ export const SQLiteMatcherRepository = (): _SQLiteMatcherRepository => {
             return prisma.animal.findFirst({
                 where: { userId},
             });
-        }
+        },
+
+        getAnimalsByUser: async (userId) => {
+            return prisma.animal.findMany({
+                where: { userId },  // On filtre par l'ID utilisateur
+                select: { id: true, firstName: true }, // On récupère uniquement l'ID et le prénom
+            });
+        },
+        
     };
 };

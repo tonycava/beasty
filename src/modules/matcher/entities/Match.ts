@@ -1,6 +1,8 @@
 export type Match = {
-    animalMatched: any;
+    animalInitiatorId: string;
+    animalMatchedId: string;
     animalInitiator: any;
+    animalMatched: any;
 	status: any;
     id: string;
 };
