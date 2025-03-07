@@ -14,7 +14,6 @@ export const POST = async ({ request }) => {
 		env.STRIPE_WEBHOOK_SECRET
 	);
 
-
 	console.log('Received event:', event.type);
 
 	switch (event.type) {
@@ -46,6 +45,10 @@ async function handleUpdate(subscription: Stripe.Subscription) {
 		userRepository: SQLiteSubscriptionUserRepository()
 	}).execute({
 		customerId: typeof customer === 'string' ? customer : customer.id,
+		cancelationDate:
+			subscription.cancel_at_period_end
+				? new Date(subscription.current_period_end! * 1000)
+				: null,
 		tier
 	});
 }

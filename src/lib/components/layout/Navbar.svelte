@@ -6,22 +6,20 @@
 	import { trpc } from '$lib/clients/client';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
-	import { fade, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 
 	type Props = {
-		connectionUrl?: string;
 		sectionsView?: Record<string, boolean>;
 		isHomePage?: boolean;
 	}
 
 	let {
-		connectionUrl = '',
 		sectionsView = {
 			home: false,
 			beasty: false,
 			tryIt: false,
 			premium: false
-		},
+		} = $bindable(),
 		isHomePage = false
 	}: Props = $props();
 
@@ -112,7 +110,7 @@
 			</PrimaryButton>
 		{:else}
 			<a
-				href={connectionUrl}
+				href="/login"
 				class="hidden w-fit mr-5 lg:block transform transition-all duration-300 hover:scale-110 hover:rotate-2"
 			>
 				<PrimaryButton type="submit" class="px-3">

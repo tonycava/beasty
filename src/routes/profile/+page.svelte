@@ -67,12 +67,12 @@
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="email"
                         >Adresse e-mail :</label>
-                    <p class="w-3/4 ml-2" id="email">{userProfile.email}</p>                
+                    <p class="w-3/4 ml-2" id="email">{userProfile.email}</p>
                 </div>
                 <div class="flex w-full pb-1">
                     <label class="w-1/3 text-right text-secondary font-semibold" for="bio">Bio :</label>
                     <p class="w-3/4 ml-2 text-justify" id="bio">
-                    
+
                     </p>
                 </div>
             </div>
