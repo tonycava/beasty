@@ -3,8 +3,9 @@
 	import { browser } from '$app/environment';
 
 	// Définition des propriétés du modal
-	let { isOpen = $bindable() } = $props<{
+	let { isOpen = $bindable(), canClose = true } = $props<{
 		isOpen?: boolean;
+		canClose: boolean;
 	}>();
 
 	// Types pour le formulaire
@@ -28,19 +29,19 @@
 
 	// État initial de l'animal
 	let animal: Animal = $state({
-		nom: "",
-		sexe: "Femelle",
-		espece: "",
-		race: "",
-		dateDeNaissance: "",
-		poids: "",
-		biographie: "",
-		photoUrl: "", // URL par défaut
+		nom: '',
+		sexe: 'Femelle',
+		espece: '',
+		race: '',
+		dateDeNaissance: '',
+		poids: '',
+		biographie: '',
+		photoUrl: '', // URL par défaut
 		photosSupplementaires: []
 	});
 
 	// Liste des sexes pour le dropdown
-	const sexes = ["Mâle", "Femelle"];
+	const sexes = ['Mâle', 'Femelle'];
 
 	// Gestion de la fermeture du modal
 	const handleClose = () => {
@@ -107,10 +108,13 @@
 			<div class="p-6">
 				<!-- Header -->
 				<div class="flex justify-end mb-4">
-					<button class="text-2xl text-gray-500 hover:text-gray-700" onclick={handleClose}>
-						×
-					</button>
+					{#if canClose}
+						<button class="text-2xl text-gray-500 hover:text-gray-700" onclick={handleClose}>
+							×
+						</button>
+					{/if}
 				</div>
+
 
 				<!-- Body -->
 				<div class="flex flex-col md:flex-row gap-8">
@@ -122,7 +126,8 @@
 							{:else}
 								<div class="w-20 h-20 text-gray-300">
 									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-full h-full">
-										<path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14h-4v-4h4v4zm0-6h-4V7h4v4z" />
+										<path
+											d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14h-4v-4h4v4zm0-6h-4V7h4v4z" />
 									</svg>
 								</div>
 							{/if}
@@ -142,7 +147,8 @@
 									class="w-20 h-20 border border-gray-200 rounded flex justify-center items-center cursor-pointer hover:bg-gray-50"
 									onclick={handleAddSupplementaryPhoto}
 								>
-									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6 text-gray-300">
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+											 class="w-6 h-6 text-gray-300">
 										<rect x="3" y="3" width="18" height="18" rx="2" />
 										<path d="M12 8v8M8 12h8" />
 									</svg>
