@@ -233,7 +233,7 @@
 							</div>
 
 							<div>
-								<label for="poids" class="block text-orange-400 text-sm mb-1">Poids</label>
+								<label for="poids" class="block text-orange-400 text-sm mb-1">Poids (kg)</label>
 								<input
 									type="text"
 									id="poids"
