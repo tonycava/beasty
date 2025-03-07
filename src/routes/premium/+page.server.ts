@@ -3,11 +3,14 @@ import type { PageServerLoad } from './$types';
 import { trpc } from '$lib/clients/client';
 
 export const load: PageServerLoad = async (event) => {
-	const userSubscriptionTier = await trpc(event).subscriptionRouter.getTier.query();
+	const [userSubscriptionTier, userSubscriptionCancelationDate] = await Promise.all([
+			trpc(event).subscriptionRouter.getTier.query(),
+			trpc(event).subscriptionRouter.getCancelationDate.query(),
+		])
 
-	console.log(userSubscriptionTier);
 	return {
 		userSubscriptionTier,
+		userSubscriptionCancelationDate,
 		paidTiers: subscriptionTiersInOrder.filter((tier) => tier !== subscriptionTiers.Free),
 	};
 };
