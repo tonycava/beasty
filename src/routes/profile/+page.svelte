@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import Navbar from '$lib/components/layout/Navbar.svelte';
+	import Footer from '$lib/components/layout/Footer.svelte';
 	import { user } from '$auth/stores/UserStore';
 	import { trpc } from '$lib/clients/client';
 	import { onMount } from 'svelte';
@@ -31,8 +33,11 @@
 	}
 
 </script>
-<div class="h-screen">
-	<div class="flex h-4/5 md:h-1/2 flex-col md:flex-row">
+
+<div class="flex flex-col min-h-screen">
+	<Navbar />
+	<div class="pt-32 bg-white z-20 h-32 w-full fixed"></div>
+	<div class="flex h-4/5 md:h-2/3 flex-col md:flex-row items-center mt-32 pt-10 pb-10">
         {#if userProfile === null}
             <div class="w-2/3 flex items-center justify-center">
                 <svg aria-hidden="true" class="w-1/4 h-1/4 animate-spin dark:text-accent fill-secondary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -87,7 +92,7 @@
 			</div>
         {/if}
 	</div>
-	<div class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2">
+	<div class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2 pt-10 pb-10">
 		<div class="flex flex-col lg:flex-row justify-center md:justify-around w-2/3">
 			<div class="w-full lg:w-1/3 flex flex-col justify-center mt-5 lg:mt-0">
 				<div class="flex w-full pb-1">
@@ -154,4 +159,5 @@
 			</button>
 		</div>
 	</div>
+	<Footer />
 </div>
