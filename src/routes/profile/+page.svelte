@@ -52,7 +52,8 @@
             </div>
         {:else}
             <div class="w-full md:w-1/3 flex justify-center items-center">
-                <img src="{userProfile.profilePicture}" class=" md:h-64 h-48 md:w-48 w-32 mt-6 rounded-3xl shadow-[-12px_-12px_#FFDB78] md:shadow-[-24px_-24px_#FFDB78]" alt="Profil"/>
+				<!-- {userProfile.profilePicture} -->
+                <img src="profile_picture.png" class=" md:h-64 h-48 md:w-52 w-40 mt-6 rounded-3xl shadow-[-12px_-12px_#FFDB78] md:shadow-[-24px_-24px_#FFDB78]" alt="Profil"/>
             </div>
 			<div class="flex flex-col lg:flex-row w-full md:w-2/3 justify-around mt-5 md:mt-0">
 				<div class="w-full lg:w-3/5 flex flex-col justify-center">
