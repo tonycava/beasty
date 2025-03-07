@@ -19,7 +19,7 @@
 			beasty: false,
 			tryIt: false,
 			premium: false
-		} = $bindable(),
+		},
 		isHomePage = false
 	}: Props = $props();
 
