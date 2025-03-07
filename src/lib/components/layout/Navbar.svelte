@@ -156,7 +156,7 @@
 					<a href="/essayer" class="px-6 py-3 hover:bg-secondary/10">Essayez-le</a>
 					<a href="/premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
 					<div class="px-6 py-3">
-						<a href={connectionUrl} class="block w-full">
+						<a href="/login" class="block w-full">
 							<PrimaryButton type="submit" class="w-full">
 								<div class="flex gap-4 items-center p-2 justify-center font-bold tracking-widest">
 									CONNEXION
