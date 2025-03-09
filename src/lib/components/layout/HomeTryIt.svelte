@@ -1,6 +1,7 @@
 <script>
 	import { Messeys } from "$lib/utils/messages.utils";
 </script>
+
 <div class="max-w-6xl py-16 mx-auto">
     <h1 class="font-bold text-2xl leading-tight mb-6 ">
         Fonctionnement
@@ -36,22 +37,17 @@
        </div>
     </div>
 </div>
-
-<div>
-    <img class="w-screen" src="/home-chat.png" alt="image de chat" />
-</div>
-<div class="w-full">
-  <div class="shadow-lg mx-auto w-3/4 overflow-hidden rounded-xl bg-white">
-    <div class="md:flex ">
-      <div class="p-8">
-        <div class="text-sm font-semibold tracking-wide text-accent uppercase">Essayez beasty</div>
-        <p class="mt-2 text-accent">
-            Je n'ai pas d'idée mais c'est génial !
-          </p>
-        <a href="#" class="mt-1 block text-lg leading-tight font-medium text-accent hover:underline">
-          Rencontrez-vous !
-        </a>
-      </div>
+<div class="relative">
+  <img src="/home-chat.png" alt="chats" class="w-full"/>
+  <div class="absolute w-xs inset-x-0 bottom-0 shadow-lg w-3/4 overflow-hidden rounded-xl bg-white m-auto text-accent">
+    <div class="p-8 flex flex-col items-center">
+      <h1 class="font-semibold text-4xl tracking-wid uppercase">Essayez beasty</h1>
+      <h2 class="text-2xl">Je n'ai pas d'idée mais c'est génial !</h2>
+      <a href="#" class="bg-accent text-2xl text-white p-2 font-semibold">
+        Rencontrez-vous
+      </a>
     </div>
   </div>
 </div>
+
+

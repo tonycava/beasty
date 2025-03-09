@@ -12,7 +12,6 @@
 	import HomeBeasty from '$lib/components/layout/HomeBeasty.svelte';
 	import HomeTryIt from '$lib/components/layout/HomeTryIt.svelte';
 
-
 	type Props = {
 		data: PageServerData;
 	};
@@ -57,42 +56,34 @@
 </script>
 
 <Navbar connectionUrl={data.url} bind:sectionsView />
-
 <div class="pt-32 bg-white z-20 h-32 w-full fixed"></div>
-
 <Header />
 
-
+<div
+	use:inview
+	oninview_enter={() => {
+		changeSection('beasty');
+	}}
+>
+	<HomeBeasty />
+</div>
 
 <div
-		style="height: 2000px"
-		use:inview
-		oninview_enter={() => {
-			changeSection('beasty');
-		}}
-	>
-	<HomeBeasty/>
+	use:inview
+	oninview_enter={() => {
+		changeSection('tryIt');
+	}}
+>
+	<HomeTryIt />
+</div>
 
-	</div>
-
-	<div
-		style="height: 2000px"
-		use:inview
-		oninview_enter={() => {
-			changeSection('tryIt');
-		}}
-	>
-	<HomeTryIt/>
-	</div>
-
-	<div
-		style="height: 2000px"
-		use:inview
-		oninview_enter={() => {
-			changeSection('premium');
-		}}
-	>
-		<span> Premium </span>
-	</div>
+<div
+	use:inview
+	oninview_enter={() => {
+		changeSection('premium');
+	}}
+>
+	<span> Premium </span>
+</div>
 
 <Footer />
