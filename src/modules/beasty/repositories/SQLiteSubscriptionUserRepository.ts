@@ -15,7 +15,8 @@ export const SQLiteSubscriptionUserRepository = (): ISQLiteSubscriptionUserRepos
 				data: {
 					tier: subscriptionTiers.Free.name,
 					stripeSubscriptionId: '',
-					stripeSubscriptionItemId: ''
+					stripeSubscriptionItemId: '',
+					stripeCancelAtPeriodEnd: null,
 				},
 				where: { stripeCustomerId: data.customerId }
 			});
@@ -29,7 +30,8 @@ export const SQLiteSubscriptionUserRepository = (): ISQLiteSubscriptionUserRepos
 
 			await prisma.subscription.update({
 				data: {
-					tier: data.tier.name
+					tier: data.tier.name,
+					stripeCancelAtPeriodEnd: data.cancelationDate,
 				},
 				where: { stripeCustomerId: data.customerId }
 			});

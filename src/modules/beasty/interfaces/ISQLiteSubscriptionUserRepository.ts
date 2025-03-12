@@ -5,7 +5,7 @@ export interface ISQLiteSubscriptionUserCreateSubscription {
 }
 
 export interface ISQLiteSubscriptionUserUpdateSubscription {
-	updateSubscription(data: Pick<UserSubscriptionAcknoledgement, 'tier' | 'customerId'>): Promise<void>;
+	updateSubscription(data: Pick<UserSubscriptionAcknoledgement, 'tier' | 'customerId'> & {cancelationDate: Date | null}): Promise<void>;
 }
 
 export interface ISQLiteSubscriptionUserDeleteSubscription {

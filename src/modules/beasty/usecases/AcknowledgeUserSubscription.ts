@@ -20,7 +20,6 @@ export const AcknowledgeUserSubscriptionUseCase: UseCase<Input, Output> = (depen
 	const { userRepository } = dependencies;
 	return {
 		async execute(data): Promise<Output> {
-			console.log('AcknowledgeUserSubscriptionUseCase data', data);
 
 			try {
 				await userRepository.createSubscription(data);

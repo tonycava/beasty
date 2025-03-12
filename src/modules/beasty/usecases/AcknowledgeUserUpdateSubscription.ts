@@ -10,7 +10,7 @@ import type {
 } from '../interfaces/ISQLiteSubscriptionUserRepository';
 
 type Input = InputFactory<
-	Pick<UserSubscriptionAcknoledgement, "tier" | "customerId">,
+	Pick<UserSubscriptionAcknoledgement, "tier" | "customerId"> & {cancelationDate: Date | null},
 	{
 		userRepository: ISQLiteSubscriptionUserUpdateSubscription;
 	}
@@ -22,10 +22,9 @@ export const AcknowledgeUserUpdateSubscriptionUseCase: UseCase<Input, Output> = 
 	const { userRepository } = dependencies;
 	return {
 		async execute(data): Promise<Output> {
-
-			console.log('AcknowledgeUserUpdateSubscriptionUseCase data', data);
 			try {
 				await userRepository.updateSubscription(data);
+
 				return UseCaseResponseBuilder.success(200, 'Success');
 			} catch (err) {
 				console.error('Error :', err);

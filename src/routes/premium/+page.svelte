@@ -9,6 +9,7 @@
 	import { trpc } from '$lib/clients/client';
 	import { page } from '$app/stores';
 	import PricingComparison from '$lib/components/layout/PricingComparison.svelte';
+	import PrimaryButton from '$lib/components/buttons/PrimaryButton.svelte';
 
 	export let data: PageServerData;
 
@@ -74,13 +75,41 @@
 
 
 	async function checkout(tier: SubscriptionTier) {
+		if (data.userSubscriptionTier !== SubscriptionTier.Free) {
+			console.log("here");
+			const url = await trpc($page).subscriptionRouter.getSubscriptionUpgradeSession.query({ tier });
+			if (!url) {
+				alert('Une erreur est survenue lors de la création de la session de paiement');
+				return;
+			}
+
+			window.location.replace(url);
+			return;
+		}
+
 		const url = await trpc($page).subscriptionRouter.getCheckoutSession.query({ tier });
+
 		if (!url) {
 			alert('Une erreur est survenue lors de la création de la session de paiement');
 			return;
 		}
 		window.location.replace(url);
 	}
+
+	async function createCustomerPortalSession() {
+		const url = await trpc($page).subscriptionRouter.createCustomerPortalSession.query();
+		if (!url) {
+			alert('Une erreur est survenue lors de la création de la session de paiement');
+			return;
+		}
+		window.location.replace(url);
+	}
+	const formatter = new Intl.DateTimeFormat('fr-FR', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	});
+
 </script>
 
 <div class="flex flex-col min-h-screen">
@@ -94,6 +123,36 @@
 				<p class="text-xl sm:text-2xl md:text-3xl font-semibold text-orange-400 mb-8 sm:mb-12">encore plus de membres
 					!</p>
 			</div>
+
+			{#if data.userSubscriptionTier !== SubscriptionTier.Free && $user != null}
+				<div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm w-fit mx-auto mb-8">
+
+					{#if data.userSubscriptionCancelationDate}
+						<div class="mb-4 p-2 bg-red-50 border border-red-200 rounded-md flex items-center gap-2">
+							<div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+							<p class="text-sm text-red-600 font-medium">Votre abonnement expire {formatter.format(data.userSubscriptionCancelationDate)}</p>
+						</div>
+					{/if}
+
+					<div class="mb-4">
+						<p class="text-base mb-1">
+							Vous êtes actuellement abonné à l'offre
+							<span class="text-orange-500 font-semibold">{data.userSubscriptionTier}</span>
+						</p>
+						<p class="text-base text-gray-700">
+							Vous pouvez gérer votre abonnement depuis votre espace client
+						</p>
+					</div>
+
+					<PrimaryButton
+						class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-md font-medium transition-colors"
+						onclick={createCustomerPortalSession}
+					>
+						Gérer
+					</PrimaryButton>
+				</div>
+			{/if}
+
 
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
 				{#each data.paidTiers as tier, index}
