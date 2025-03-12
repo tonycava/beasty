@@ -1,9 +1,10 @@
 import { t } from '$lib/trpc/t';
 import { z } from 'zod';
-import { GetUserInfoUseCase } from '../../modules/profile/usescases/GetUserInfoUseCase';
+import { GetUserInfoUseCase } from '../../modules/profile/usecase/GetUserInfoUseCase';
 import { SQLiteUserProfileRepository } from '../../modules/profile/repositories/SQLiteUserProfileRepository';
 import { SubscriptionRouter } from '../../modules/beasty/routes/SubscriptionRouter';
 import { AuthRouter } from '$auth/routes/AuthRouter';
+import { AnimalRouter } from '../../modules/profile/routes/AnimalRouter';
 
 export const router = t.router({
 	getUser: t.procedure
@@ -22,7 +23,8 @@ export const router = t.router({
 		return null;
 	}),
 	authRouter: AuthRouter,
-	subscriptionRouter: SubscriptionRouter
+	subscriptionRouter: SubscriptionRouter,
+	animalRouter: AnimalRouter,
 });
 
 export type Router = typeof router;

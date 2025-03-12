@@ -6,27 +6,87 @@
 	import { trpc } from '$lib/clients/client';
 	import { onMount } from 'svelte';
 	import type { User } from '../../modules/profile/entities/User';
+	import AnimalModal from '$lib/components/layout/AnimalModal.svelte';
+	import type { AnimalDto } from '../../modules/profile/dto/AnimalDto';
 
-	let userProfile: User | null = null;
-    let now = new Date();
-    let year = 0;
-    let month = 0;
-    let day = 0;
-	let editHumanMode = false;
-	let editPetMode = false;
+	let userProfile = $state<User | null>(null);
+	let animals = $state<any[]>([]);
+	let now = $state(new Date());
+	let year = $state(0);
+	let month = $state(0);
+	let day = $state(0);
+	let isLoading = $state(false);
+	let error = $state<string | null>(null);
+	let editHumanMode = $state(false);
+	let editPetMode = $state(false);
 
-    const formatter = new Intl.DateTimeFormat('fr-FR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
+	const formatter = new Intl.DateTimeFormat('fr-FR', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
+
+	let { data } = $props();
+
+	let isAnimalModalOpen = $state(false);
+
+	function openAnimalModal() {
+		isAnimalModalOpen = true;
+	}
+
+	function closeAnimalModal() {
+		isAnimalModalOpen = false;
+	}
+
+	async function saveAnimal(event: CustomEvent<AnimalDto>): Promise<void> {
+		try {
+			isLoading = true;
+			error = null;
+			const animalData = event.detail;
+
+			console.log('Animal data:', animalData);
+
+
+			await loadAnimals();
+
+			closeAnimalModal();
+		} catch (err: any) {
+			error = err.message || "Une erreur est survenue lors de la création de l'animal";
+			console.error('Erreur lors de la sauvegarde:', err);
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function loadAnimals() {
+		try {
+			if (!$user?.id) return;
+
+			await trpc($page).animalRouter.getAnimalsByUser.query($user.id);
+
+		} catch (err) {
+			console.error('Erreur lors du chargement des animaux:', err);
+		}
+	}
 
 	onMount(async () => {
-		userProfile = await trpc($page).getUser.query($user?.id!);
-        year = now.getFullYear();
-        month = now.getMonth()+1;
-        day = now.getDate();
-        console.log(user);
+		try {
+			isLoading = true;
+
+			if ($user?.id) {
+				userProfile = await trpc($page).getUser.query($user.id);
+
+				await loadAnimals();
+			}
+
+			year = now.getFullYear();
+			month = now.getMonth() + 1;
+			day = now.getDate();
+		} catch (err) {
+			console.error('Erreur lors du chargement des données:', err);
+		} finally {
+			isLoading = false;
+		}
 	});
 
 	function toggleEditHuman(){
@@ -95,11 +155,11 @@
 				</div>
 				<div class="w-full lg:w-2/5 flex flex-col justify-center items-center mt-5 md:mt-0">
 					{#if !editHumanMode}
-						<button class="bg-accent text-white rounded-full w-3/5 mb-2" on:click={toggleEditHuman}>Modifier</button>
+						<button class="bg-accent text-white rounded-full w-3/5 mb-2" onclick={toggleEditHuman}>Modifier</button>
 					{:else}
-						<button class="bg-accent text-white rounded-full w-3/5 mb-2" on:click={toggleEditHuman}>Sauvegarder</button>
+						<button class="bg-accent text-white rounded-full w-3/5 mb-2" onclick={toggleEditHuman}>Sauvegarder</button>
 					{/if}
-					<button class="bg-accent text-white rounded-full w-3/5 mb-2">Ajouter un animal</button>
+					<button class="bg-accent text-white rounded-full w-3/5 mb-2" onclick={openAnimalModal}>Ajouter un animal</button>
 					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2">Supprimer le compte</button>
 				</div>
 			</div>
@@ -195,9 +255,9 @@
 				</div>
 				<div class="flex mt-5">
 					{#if !editPetMode}
-						<button class="bg-accent text-white rounded-full w-1/2" on:click={toggleEditPet}>Modifier</button>
+						<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Modifier</button>
 					{:else}
-						<button class="bg-accent text-white rounded-full w-1/2" on:click={toggleEditPet}>Sauvegarder</button>
+						<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Sauvegarder</button>
 					{/if}
 					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5"
 						>Désactiver</button
@@ -221,3 +281,11 @@
 	</div>
 	<Footer />
 </div>
+
+<AnimalModal
+	canClose
+	data={data.form}
+	bind:isOpen={isAnimalModalOpen}
+	on:close={closeAnimalModal}
+	on:save={saveAnimal}
+/>
