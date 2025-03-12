@@ -10,6 +10,7 @@ export type Animal = {
 	birthday: string;
 	species: string;
 	breed: string;
+	weight: number;
 	sex: string;
 	bio: string;
 	userId: string;

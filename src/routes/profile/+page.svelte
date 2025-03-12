@@ -22,6 +22,8 @@
 		day: 'numeric'
 	});
 
+	let { data } = $props();
+
 	let isAnimalModalOpen = $state(false);
 
 	function openAnimalModal() {
@@ -32,18 +34,14 @@
 		isAnimalModalOpen = false;
 	}
 
-	async function saveAnimal(event: CustomEvent<AnimalDto>) {
+	async function saveAnimal(event: CustomEvent<AnimalDto>): Promise<void> {
 		try {
 			isLoading = true;
 			error = null;
 			const animalData = event.detail;
-			console.log('Animal à sauvegarder:', animalData);
 
-			const result = await trpc($page).createAnimal.mutate(animalData);
+			console.log('Animal data:', animalData);
 
-			if (result.status === 'error') {
-				throw new Error(result.message);
-			}
 
 			await loadAnimals();
 
@@ -59,21 +57,32 @@
 	async function loadAnimals() {
 		try {
 			if (!$user?.id) return;
-			const result = await trpc($page).getAnimalsByUser.query($user.id);
-			if (result.status === 'success') {
-				animals = result.data;
-			}
+
+			await trpc($page).animalRouter.getAnimalsByUser.query($user.id);
+
 		} catch (err) {
 			console.error('Erreur lors du chargement des animaux:', err);
 		}
 	}
 
 	onMount(async () => {
-		userProfile = await trpc($page).getUser.query($user?.id!);
-		year = now.getFullYear();
-		month = now.getMonth() + 1;
-		day = now.getDate();
-		console.log(user);
+		try {
+			isLoading = true;
+
+			if ($user?.id) {
+				userProfile = await trpc($page).getUser.query($user.id);
+
+				await loadAnimals();
+			}
+
+			year = now.getFullYear();
+			month = now.getMonth() + 1;
+			day = now.getDate();
+		} catch (err) {
+			console.error('Erreur lors du chargement des données:', err);
+		} finally {
+			isLoading = false;
+		}
 	});
 </script>
 
@@ -216,6 +225,7 @@
 
 <AnimalModal
 	canClose
+	data={data.form}
 	bind:isOpen={isAnimalModalOpen}
 	on:close={closeAnimalModal}
 	on:save={saveAnimal}

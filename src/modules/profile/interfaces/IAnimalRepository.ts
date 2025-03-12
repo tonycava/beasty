@@ -14,7 +14,7 @@ export type IAnimalRepositoryGetAnimalsByUser = {
 };
 
 export type IAnimalRepositoryUpdateAnimal = {
-	updateAnimal(animal: AnimalItem): Promise<void>;
+	updateAnimal(animal: AnimalDto): Promise<void>;
 };
 
 export type IAnimalRepositoryDeleteAnimal = {

@@ -1,6 +1,6 @@
 import { UseCaseResponseBuilder, type InputFactory, type OutputFactory, type UseCase } from '$lib/interfaces/UseCase';
-import type { Animal } from '../entities/Animal';
 import type { IAnimalRepositoryGetAnimalsByUser } from '../interfaces/IAnimalRepository';
+import type { AnimalItem } from '../entities/Animal';
 
 type Input = InputFactory<
 	string,
@@ -9,13 +9,13 @@ type Input = InputFactory<
 	}
 >;
 
-type Output = OutputFactory<Animal[]>;
+type Output = OutputFactory<AnimalItem[]>;
 
 export const GetAnimalsByUserUseCase: UseCase<Input, Output> = (dependencies) => {
 	const { animalRepository } = dependencies;
 
 	return {
-		execute: async (userId) => {
+		execute: async (userId: string) => {
 			try {
 				const animals = await animalRepository.getAnimalsByUser(userId);
 

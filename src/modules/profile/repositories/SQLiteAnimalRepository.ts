@@ -2,25 +2,35 @@ import type { IAnimalRepository } from '../interfaces/IAnimalRepository';
 import type { AnimalItem } from '../entities/Animal';
 import type { AnimalDto } from '../dto/AnimalDto';
 import prisma from '$lib/server/db';
+import { uploadToS3 } from '$lib/utils/s3UploadImage';
 
 type _SQLiteAnimalRepository = IAnimalRepository;
 
 export const SQLiteAnimalRepository = (): _SQLiteAnimalRepository => {
 	return {
 		async createAnimal(animalData: AnimalDto): Promise<AnimalItem> {
-			const { images, ...animalDetails } = animalData;
+			const {images, ...animalDetails } = animalData;
 
-			return prisma.animal.create({
-				include: {
-					images: true
-				},
-				data: {
-					...animalDetails,
-					images: {
-						create: images
-					}
-				}
+			const animal = await prisma.animal.create({
+				include: { images: true },
+				data: animalDetails,
 			});
+
+			const images2 = await Promise.all(images.map(async (image) => {
+				const url = await uploadToS3(image);
+				await prisma.image.create({
+					data: {
+						url: url!,
+						animal: {
+							connect: {
+								id: animal.id
+							}
+						}
+					}
+				});
+			}));
+
+			return animal;
 		},
 		async getAnimal(animalId: string): Promise<AnimalItem | null> {
 			return prisma.animal.findUnique({
@@ -42,8 +52,8 @@ export const SQLiteAnimalRepository = (): _SQLiteAnimalRepository => {
 				}
 			});
 		},
-		async updateAnimal(animal: AnimalItem): Promise<void> {
-			const { id, images, ...animalDetails } = animal;
+		async updateAnimal(animal: AnimalDto): Promise<void> {
+			const {id, images, ...animalDetails } = animal;
 
 			await prisma.animal.update({
 				where: {
@@ -55,7 +65,6 @@ export const SQLiteAnimalRepository = (): _SQLiteAnimalRepository => {
 						deleteMany: {
 							animalId: id
 						},
-						create: images
 					}
 				}
 			});

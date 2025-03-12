@@ -1,5 +1,5 @@
 import { UseCaseResponseBuilder, type InputFactory, type OutputFactory, type UseCase } from '$lib/interfaces/UseCase';
-import type { Animal } from '../entities/Animal';
+import type { AnimalItem } from '../entities/Animal';
 import type { IAnimalRepositoryGetAnimal } from '../interfaces/IAnimalRepository';
 
 type Input = InputFactory<
@@ -9,7 +9,7 @@ type Input = InputFactory<
 	}
 >;
 
-type Output = OutputFactory<Animal>;
+type Output = OutputFactory<AnimalItem>;
 
 export const GetAnimalUseCase: UseCase<Input, Output> = (dependencies) => {
 	const { animalRepository } = dependencies;
