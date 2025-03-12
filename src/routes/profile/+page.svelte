@@ -145,11 +145,15 @@
 					<div class="flex w-full pb-1">
 						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="bio">Bio :</label>
 						{#if !editHumanMode}
-							<p class="w-1/2 lg:w-2/3 ml-2 text-justify" id="bio">
-								bloup <!-- Add user's bio from BD -->
-							</p>
+							{#if userProfile.bio === ""}
+								<p class="w-1/2 lg:w-2/3 ml-2 text-justify">Aucune biographie</p>
+							{:else}
+								<p class="w-1/2 lg:w-2/3 ml-2 text-justify" id="bio">
+									{userProfile.bio}
+								</p>
+							{/if}
 						{:else}
-							<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 ml-2">bloup</textarea> <!-- Add user's bio from BD -->
+							<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 ml-2">{userProfile.bio}</textarea> <!-- Add user's bio from BD -->
 						{/if}
 					</div>
 				</div>
