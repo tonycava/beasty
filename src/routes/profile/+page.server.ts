@@ -4,6 +4,7 @@ import { animalDto } from '../../modules/profile/dto/AnimalDto';
 import { fail } from '@sveltejs/kit';
 import { trpc } from '$lib/clients/client';
 import { CreateAnimalUseCase } from '../../modules/profile/usecase/CreateAnimalUseCase';
+import { UpdateAnimalUseCase } from '../../modules/profile/usecase/UpdateAnimalUseCase';
 import { SQLiteAnimalRepository } from '../../modules/profile/repositories/SQLiteAnimalRepository';
 
 export const load = async () => {
@@ -13,20 +14,35 @@ export const load = async () => {
 };
 
 export const actions = {
-	default: async (event) => {
+	// default: async (event) => {
+	// 	const formData = await event.request.formData();
+	// 	const form = await superValidate(formData, zod(animalDto));
+
+	// 	if (!form.valid) {
+	// 		return fail(400, withFiles({ form }));
+	// 	}
+
+	// 	const createAnimalUseCase = await CreateAnimalUseCase({
+	// 		animalRepository: SQLiteAnimalRepository()
+	// 	}).execute(form.data);
+
+	// 	if (createAnimalUseCase.isSuccess) {
+	// 		return createAnimalUseCase.data;
+	// 	}
+
+	// 	return message(form, 'Form posted successfully!');
+	// },
+	updatePet: async (event) => {
 		const formData = await event.request.formData();
-		const form = await superValidate(formData, zod(animalDto));
 
-		if (!form.valid) {
-			return fail(400, withFiles({ form }));
-		}
-
-		const createAnimalUseCase = await CreateAnimalUseCase({
+		const updateAnimalUseCase = await UpdateAnimalUseCase({
 			animalRepository: SQLiteAnimalRepository()
-		}).execute(form.data);
+		}).execute(formData);
 
-		if (createAnimalUseCase.isSuccess) {
-			return createAnimalUseCase.data;
+		if (updateAnimalUseCase.isSuccess) {
+			console.log('updatePet');
+
+			return updateAnimalUseCase.data;
 		}
 
 		return message(form, 'Form posted successfully!');

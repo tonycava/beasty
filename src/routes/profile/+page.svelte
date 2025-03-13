@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { enhance } from "$app/forms";
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import { user } from '$auth/stores/UserStore';
@@ -69,6 +70,22 @@
 		}
 	}
 
+	function toggleEditHuman(){
+		editHumanMode = !editHumanMode;
+	}
+	function toggleEditPet(){
+		editPetMode = !editPetMode;
+	}
+
+	function addPicture(){
+		console.log('Add picture');
+	}
+
+	function cancel(){
+		editHumanMode = false;
+    	editPetMode = false;
+	}
+
 	onMount(async () => {
 		try {
 			isLoading = true;
@@ -88,13 +105,6 @@
 			isLoading = false;
 		}
 	});
-
-	function toggleEditHuman(){
-		editHumanMode = !editHumanMode;
-	}
-	function toggleEditPet(){
-		editPetMode = !editPetMode;
-	}
 	
 </script>
 
@@ -169,120 +179,143 @@
 			</div>
         {/if}
 	</div>
+	
+
+	{#if editPetMode}
+	<form method="POST" action="?/updatePet" use:enhance class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2 pt-10 pb-10">
+		<div class="flex flex-col lg:flex-row justify-center max-[450px]:w-4/5 w-2/3">
+			<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
+				<div class="flex w-full pb-1">
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="first_name">Prénom :</label>
+					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="first_name" name="first_name" value="Hunter" required/>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="age_pet">Âge :</label>
+					<input type="number" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2 w-16" id="age_pet" name="age_pet" value="2" required/>
+					<p class="ml-1">ans</p>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="birthday_pet">Anniversaire :</label>
+					<input type="date" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="birthday_pet" name="birthday_pet" required/>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="specie">Espèce :</label>
+					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="specie" name="specie" value="Chien" required/>					
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="breed">Race :</label>
+					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="breed" name="breed" value="Corgi" required/>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="gender">Sexe :</label>
+					<div class="flex w-1/2 lg:w-2/3 ml-2 text-justify">	
+						<div class="flex items-center ml-2">
+							<input type="radio" id="gender" name="gender" value="Mâle" checked/>
+							<p class="ml-1">Mâle</p>
+							<img src="icons/Male.svg" class="w-5 ml-1 mr-2" alt="Sexe masculin"/>
+						</div>
+						<div class="flex items-center ml-3">
+							<input type="radio" id="gender" name="gender" value="Femelle"/>
+							<p class="ml-1">Femelle</p>
+							<img src="icons/Female.svg" class="w-5 ml-1" alt="Sexe féminin"/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="w-full lg:w-1/2 flex flex-col justify-center pl-5 lg:pl-0 pr-5 lg:pr-0 mb-5 lg:mb-0">
+				<div class="flex flex-col">
+					<label class="text-secondary font-semibold" for="bio_pet">Biographie :</label>
+					<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 pr-1 ml-2 text-justify overflow-x-hidden" rows="10" cols="35" id="bio_pet" name="bio_pet">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper.</textarea>
+				</div>
+				<div class="flex mt-5">
+					<button type="submit" class="bg-accent text-white rounded-full w-1/2">Sauvegarder</button>
+					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5" onclick={cancel}>Annuler</button>
+				</div>
+			</div>
+		</div>
+		<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
+			<div class="flex">
+				<button type="button" class="mr-2 lg:mr-4">
+					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
+				</button>
+				<img
+					src="corgi.png"
+					class="rounded-full h-40 lg:h-48 xl:h-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6"
+					alt="Profil animal"
+				/>
+				<button type="button" class="ml-4 lg:ml-8">
+					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant" />
+				</button>
+			</div>
+			<label for="fileInput" class="text-secondary font-semibold mb-1">Ajouter une photo :</label>
+			<input type="file" id="fileInput">
+		</div>
+	</form>
+	{:else}
 	<div class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2 pt-10 pb-10">
 		<div class="flex flex-col lg:flex-row justify-center max-[450px]:w-4/5 w-2/3">
 			<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
 				<div class="flex w-full pb-1">
-					{#if !editPetMode}
-						<label class="w-1/2 text-right text-secondary font-semibold" for="first_name">Prénom :</label>
-						<p class="w-1/2 ml-2" id="first_name_pet">Hunter</p>
-					{:else}
-						<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="first_name">Prénom :</label>
-						<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" value="Hunter"/>
-					{/if}
+					<p class="w-1/2 text-right text-secondary font-semibold">Prénom :</p>
+					<p class="w-1/2 ml-2">Hunter</p>
 				</div>
 				<div class="flex w-full pb-1">
-					{#if !editPetMode}
-						<label class="w-1/2 text-right text-secondary font-semibold" for="age_pet">Âge :</label>
-						<p class="w-1/2 ml-2" id="age_pet">2 ans</p>
-					{:else}
-						<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="age_pet">Âge :</label>
-						<input type="number" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2 w-16" value="2"/>
-						<p class="ml-1">ans</p>
-					{/if}
+					<p class="w-1/2 text-right text-secondary font-semibold">Âge :</p>
+					<p class="w-1/2 ml-2">2 ans</p>
 				</div>
 				<div class="flex w-full pb-1">
-					{#if !editPetMode}
-						<label class="w-1/2 text-right text-secondary font-semibold" for="birthday_pet">Anniversaire :</label>
-						<p class="w-1/2 ml-2" id="birthday_pet">26 décembre</p>
-					{:else}
-						<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="birthday_pet">Anniversaire :</label>
-						<input type="date" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2"/>
-					{/if}
+					<p class="w-1/2 text-right text-secondary font-semibold">Anniversaire :</p>
+					<p class="w-1/2 ml-2">26 décembre</p>
 				</div>
 				<div class="flex w-full pb-1">
-					{#if !editPetMode}
-						<label class="w-1/2 text-right text-secondary font-semibold" for="specie">Espèce :</label>
-						<p class="w-1/2 ml-2" id="specie">Chien</p>
-					{:else}
-						<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="specie">Espèce :</label>
-						<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" value="Chien"/>
-					{/if}
-					
+					<p class="w-1/2 text-right text-secondary font-semibold">Espèce :</p>
+					<p class="w-1/2 ml-2">Chien</p>
 				</div>
 				<div class="flex w-full pb-1">
-					{#if !editPetMode}
-						<label class="w-1/2 text-right text-secondary font-semibold" for="breed">Race :</label>
-						<p class="w-1/2 ml-2" id="breed">Corgi</p>
-					{:else}
-						<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="breed">Race :</label>
-						<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" value="Corgi"/>
-					{/if}
+					<p class="w-1/2 text-right text-secondary font-semibold">Race :</p>
+					<p class="w-1/2 ml-2">Corgi</p>
 				</div>
 				<div class="flex w-full pb-1">
-					{#if !editPetMode}
-						<label class="w-1/2 text-right text-secondary font-semibold" for="gender">Sexe :</label>
-						<div class="flex w-1/2 ml-2 text-justify">
-							<p id="gender">Mâle</p>
-							<img src="icons/Male.svg" class="w-5 ml-1" alt="Sexe masculin"/>
-						</div>
-					{:else}
-						<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="gender">Sexe :</label>
-						<div class="flex w-1/2 lg:w-2/3 ml-2 text-justify">	
-							<div class="flex items-center ml-2">
-								<input type="radio" value="Mâle" checked/>
-								<p class="ml-1">Mâle</p>
-								<img src="icons/Male.svg" class="w-5 ml-1 mr-2" alt="Sexe masculin"/>
-							</div>
-							<div class="flex items-center ml-3">
-								<input type="radio" value="Femelle"/>
-								<p class="ml-1">Femelle</p>
-								<img src="icons/Female.svg" class="w-5 ml-1" alt="Sexe féminin"/>
-							</div>
-						</div>
-					{/if}
+					<p class="w-1/2 text-right text-secondary font-semibold">Sexe :</p>
+					<div class="flex w-1/2 ml-2 text-justify">
+						<p>Mâle</p>
+						<img src="icons/Male.svg" class="w-5 ml-1" alt="Sexe masculin"/>
+					</div>
 				</div>
 			</div>
 			<div class="w-full lg:w-1/2 flex flex-col justify-center pl-5 lg:pl-0 pr-5 lg:pr-0 mb-5 lg:mb-0">
-				<div>
-					<label class="text-secondary font-semibold" for="bio_pet">Biographie :</label>
-					{#if !editPetMode}
-						<p class="text-justify" id="bio_pet">
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend
-						at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et
-						malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique
-						ullamcorper.
-						</p>
-					{:else}
-						<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 pr-1 ml-2 text-justify overflow-x-hidden" rows="5" cols="50">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper.</textarea>
-					{/if}
+				<div class="flex flex-col">
+					<p class="text-secondary font-semibold">Biographie :</p>
+					<p class="text-justify">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend
+					at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et
+					malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique
+					ullamcorper.
+					</p>
 				</div>
 				<div class="flex mt-5">
-					{#if !editPetMode}
-						<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Modifier</button>
-					{:else}
-						<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Sauvegarder</button>
-					{/if}
-					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5"
-						>Désactiver</button
-					>
+					<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Modifier</button>
+					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5">Désactiver</button>
 				</div>
 			</div>
 		</div>
-		<div class="w-full md:w-1/3 flex justify-center items-center">
-			<button type="button" class="mr-2 lg:mr-4">
-				<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
-			</button>
-			<img
-				src="corgi.png"
-				class="rounded-full h-40 lg:h-48 xl:h-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6"
-				alt="Profil animal"
-			/>
-			<button type="button" class="ml-4 lg:ml-8">
-				<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant" />
-			</button>
+		<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
+			<div class="flex">
+				<button type="button" class="mr-2 lg:mr-4">
+					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
+				</button>
+				<img
+					src="corgi.png"
+					class="rounded-full h-40 lg:h-48 xl:h-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6"
+					alt="Profil animal"
+				/>
+				<button type="button" class="ml-4 lg:ml-8">
+					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant" />
+				</button>
+			</div>
 		</div>
 	</div>
+	{/if}
 	<Footer />
 </div>
 
