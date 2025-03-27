@@ -32,10 +32,10 @@
 	let currentIndex = $state(0);
 
 	  // Liste des images
-	const animalImages = [
+	let animalImages = $state([
         'corgi.png',
 		'puppy.jpg'
-    ];
+    ]);
 
 	function openAnimalModal() {
 		isAnimalModalOpen = true;
@@ -92,13 +92,20 @@
     	editPetMode = false;
 	}
 
+	function prevPet() {
+
+	}
+	function nextPet() {
+
+	}
+
 	function nextImage() {
         currentIndex = (currentIndex + 1) % animalImages.length;
     }
-
-    function prevImage() {
-        currentIndex = (currentIndex - 1 + animalImages.length) % animalImages.length;
-    }
+	function deleteImage() {
+		animalImages.splice(currentIndex, 1);
+		nextImage();
+	}
 
 	onMount(async () => {
 		try {
@@ -252,24 +259,27 @@
 		</div>
 		<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
 			<div class="flex">
-				<button type="button" class="mr-2 lg:mr-4" onclick={prevImage}>
-					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
-				</button>
-				<img
-					src="{animalImages[currentIndex]}"
-					class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
-					alt="Profil animal"
-				/>
-				<button type="button" class="ml-4 lg:ml-8" onclick={nextImage}>
-					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant"/>
+				<button type="button" onclick={nextImage}>
+					<img
+						src="{animalImages[currentIndex]}"
+						class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
+						alt="Profil animal"
+					/>
 				</button>
 			</div>
+			<button type="button" onclick={deleteImage} class="flex mt-1 text-secondary font-semibold mb-1">
+				Supprimer la photo
+				<img src="icons/Trash.svg" alt="Supprimer" width="20px" height="20px" class="ml-1"/>
+			</button>
 			<label for="fileInput" class="text-secondary font-semibold mb-1">Ajouter une photo :</label>
 			<input type="file" id="fileInput">
 		</div>
 	</form>
 	{:else}
 	<div class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2 pt-10 pb-10">
+		<button type="button" class="ml-2 lg:ml-4" onclick={prevPet}>
+			<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
+		</button>
 		<div class="flex flex-col lg:flex-row justify-center max-[450px]:w-4/5 w-2/3">
 			<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
 				<div class="flex w-full pb-1">
@@ -318,19 +328,18 @@
 		</div>
 		<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
 			<div class="flex">
-				<button type="button" class="mr-2 lg:mr-4" onclick={prevImage}>
-					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
-				</button>
-				<img
-					src="{animalImages[currentIndex]}"
-					class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
-					alt="Profil animal"
-				/>
-				<button type="button" class="ml-4 lg:ml-8" onclick={nextImage}>
-					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant"/>
+				<button type="button" onclick={nextImage}>
+					<img
+						src="{animalImages[currentIndex]}"
+						class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
+						alt="Profil animal"
+					/>
 				</button>
 			</div>
 		</div>
+		<button type="button" class="mr-4 lg:mr-8" onclick={nextPet}>
+			<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant"/>
+		</button>
 	</div>
 	{/if}
 	<Footer />
