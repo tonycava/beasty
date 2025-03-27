@@ -252,16 +252,16 @@
 		</div>
 		<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
 			<div class="flex">
-				<button type="button" class="mr-2 lg:mr-4">
+				<button type="button" class="mr-2 lg:mr-4" onclick={prevImage}>
 					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
 				</button>
 				<img
-					src="corgi.png"
-					class="rounded-full h-40 lg:h-48 xl:h-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6"
+					src="{animalImages[currentIndex]}"
+					class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
 					alt="Profil animal"
 				/>
-				<button type="button" class="ml-4 lg:ml-8">
-					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant" />
+				<button type="button" class="ml-4 lg:ml-8" onclick={nextImage}>
+					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant"/>
 				</button>
 			</div>
 			<label for="fileInput" class="text-secondary font-semibold mb-1">Ajouter une photo :</label>
