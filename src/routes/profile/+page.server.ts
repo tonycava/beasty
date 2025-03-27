@@ -14,37 +14,29 @@ export const load = async () => {
 };
 
 export const actions = {
-	// default: async (event) => {
-	// 	const formData = await event.request.formData();
-	// 	const form = await superValidate(formData, zod(animalDto));
-
-	// 	if (!form.valid) {
-	// 		return fail(400, withFiles({ form }));
-	// 	}
-
-	// 	const createAnimalUseCase = await CreateAnimalUseCase({
-	// 		animalRepository: SQLiteAnimalRepository()
-	// 	}).execute(form.data);
-
-	// 	if (createAnimalUseCase.isSuccess) {
-	// 		return createAnimalUseCase.data;
-	// 	}
-
-	// 	return message(form, 'Form posted successfully!');
-	// },
-	updatePet: async (event) => {
+	default: async (event) => {
 		const formData = await event.request.formData();
+		const form = await superValidate(formData, zod(animalDto));
 
-		const updateAnimalUseCase = await UpdateAnimalUseCase({
+		if (!form.valid) {
+			return fail(400, withFiles({ form }));
+		}
+
+		const createAnimalUseCase = await CreateAnimalUseCase({
 			animalRepository: SQLiteAnimalRepository()
-		}).execute(formData);
+		}).execute(form.data);
 
-		if (updateAnimalUseCase.isSuccess) {
-			console.log('updatePet');
-
-			return updateAnimalUseCase.data;
+		if (createAnimalUseCase.isSuccess) {
+			return createAnimalUseCase.data;
 		}
 
 		return message(form, 'Form posted successfully!');
-	}
+	},
+	// updatePet: async (event) => {
+	
+	// }
+
+	// updateUser: async (event) => {
+		
+	// }
 };

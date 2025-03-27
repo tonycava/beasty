@@ -28,8 +28,14 @@
 	});
 
 	let { data } = $props();
-
 	let isAnimalModalOpen = $state(false);
+	let currentIndex = $state(0);
+
+	  // Liste des images
+	const animalImages = [
+        'corgi.png',
+		'puppy.jpg'
+    ];
 
 	function openAnimalModal() {
 		isAnimalModalOpen = true;
@@ -86,6 +92,14 @@
     	editPetMode = false;
 	}
 
+	function nextImage() {
+        currentIndex = (currentIndex + 1) % animalImages.length;
+    }
+
+    function prevImage() {
+        currentIndex = (currentIndex - 1 + animalImages.length) % animalImages.length;
+    }
+
 	onMount(async () => {
 		try {
 			isLoading = true;
@@ -126,35 +140,34 @@
             </div>
         {:else}
             <div class="w-full md:w-1/3 flex justify-center items-center">
-				<!-- {userProfile.profilePicture} -->
-                <img src="profile_picture.png" class=" md:h-64 h-48 md:w-52 w-40 mt-6 rounded-3xl shadow-[-12px_-12px_#FFDB78] md:shadow-[-24px_-24px_#FFDB78]" alt="Profil"/>
+				<!--  -->
+                <img src={userProfile.profilePicture} class="md:h-64 h-48 md:w-52 w-40 mt-6 rounded-3xl shadow-[-12px_-12px_#FFDB78] md:shadow-[-24px_-24px_#FFDB78] object-cover" alt="Profil"/>
             </div>
-			<div class="flex flex-col lg:flex-row w-full md:w-2/3 justify-around mt-5 md:mt-0">
+			<form method="POST" action="?/updateUser" use:enhance class="flex flex-col lg:flex-row w-full md:w-2/3 justify-around mt-5 md:mt-0">
 				<div class="w-full lg:w-3/5 flex flex-col justify-center">
 					<div class="flex w-full pb-1">
-						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="first_name">Prénom :</label>
-						<p class="w-1/2 lg:w-2/3 ml-2" id="first_name">{userProfile.firstName}</p>
+						<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">Prénom :</p>
+						<p class="w-1/2 lg:w-2/3 ml-2">{userProfile.firstName}</p>
 					</div>
 					<div class="flex w-full pb-1">
-						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="last_name">Nom :</label>
-						<p class="w-1/2 lg:w-2/3 ml-2" id="last_name">{userProfile.lastName}</p>
+						<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">Nom :</p>
+						<p class="w-1/2 lg:w-2/3 ml-2">{userProfile.lastName}</p>
 					</div>
 					<div class="flex w-full pb-1">
-						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="age">Âge :</label>
-						<p class="w-1/2 lg:w-2/3 ml-2" id="age">{Math.abs((new Date(Date.now() - (new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0]))).getTime()).getUTCFullYear()) - 1970)}</p>
+						<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">Âge :</p>
+						<p class="w-1/2 lg:w-2/3 ml-2">{Math.abs((new Date(Date.now() - (new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0]))).getTime()).getUTCFullYear()) - 1970)}</p>
 					</div>
 					<div class="flex w-full pb-1">
-						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="birthday">Anniversaire :</label>
-						<p class="w-1/2 lg:w-2/3 ml-2" id="birthday">{formatter.format(new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0])))}</p>
+						<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">Anniversaire :</p>
+						<p class="w-1/2 lg:w-2/3 ml-2">{formatter.format(new Date(Number(userProfile.birthday.split('/')[2]), Number(userProfile.birthday.split('/')[1])-1, Number(userProfile.birthday.split('/')[0])))}</p>
 					</div>
 					<div class="flex w-full pb-1">
-						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="email"
-							>E-mail :</label>
-						<p class="w-1/2 lg:w-2/3 ml-2" id="email">{userProfile.email}</p>                
+						<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">E-mail :</p>
+						<p class="w-1/2 lg:w-2/3 ml-2">{userProfile.email}</p>                
 					</div>
-					<div class="flex w-full pb-1">
-						<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="bio">Bio :</label>
-						{#if !editHumanMode}
+					{#if !editHumanMode}
+						<div class="flex w-full pb-1">
+							<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">Bio :</p>
 							{#if userProfile.bio === ""}
 								<p class="w-1/2 lg:w-2/3 ml-2 text-justify">Aucune biographie</p>
 							{:else}
@@ -162,21 +175,25 @@
 									{userProfile.bio}
 								</p>
 							{/if}
-						{:else}
-							<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 ml-2">{userProfile.bio}</textarea> <!-- Add user's bio from BD -->
-						{/if}
-					</div>
+						</div>
+					{:else}
+						<div class="flex w-full pb-1">
+							<label class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold" for="bio">Bio :</label>
+							<textarea name="bio" class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 ml-2">{userProfile.bio}</textarea>
+						</div>
+					{/if}
 				</div>
 				<div class="w-full lg:w-2/5 flex flex-col justify-center items-center mt-5 md:mt-0">
 					{#if !editHumanMode}
 						<button class="bg-accent text-white rounded-full w-3/5 mb-2" onclick={toggleEditHuman}>Modifier</button>
+						<button class="bg-accent text-white rounded-full w-3/5 mb-2" onclick={openAnimalModal}>Ajouter un animal</button>
+						<button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2">Supprimer le compte</button>
 					{:else}
-						<button class="bg-accent text-white rounded-full w-3/5 mb-2" onclick={toggleEditHuman}>Sauvegarder</button>
+						<button type="submit" class="bg-accent text-white rounded-full w-3/5 mb-2">Sauvegarder</button>
+						<button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2" onclick={cancel}>Annuler</button>
 					{/if}
-					<button class="bg-accent text-white rounded-full w-3/5 mb-2" onclick={openAnimalModal}>Ajouter un animal</button>
-					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-3/5 mb-2">Supprimer le compte</button>
 				</div>
-			</div>
+			</form>
         {/if}
 	</div>
 	
@@ -301,16 +318,16 @@
 		</div>
 		<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
 			<div class="flex">
-				<button type="button" class="mr-2 lg:mr-4">
+				<button type="button" class="mr-2 lg:mr-4" onclick={prevImage}>
 					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
 				</button>
 				<img
-					src="corgi.png"
-					class="rounded-full h-40 lg:h-48 xl:h-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6"
+					src="{animalImages[currentIndex]}"
+					class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
 					alt="Profil animal"
 				/>
-				<button type="button" class="ml-4 lg:ml-8">
-					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant" />
+				<button type="button" class="ml-4 lg:ml-8" onclick={nextImage}>
+					<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant"/>
 				</button>
 			</div>
 		</div>
