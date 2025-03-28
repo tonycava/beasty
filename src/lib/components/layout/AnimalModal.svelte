@@ -8,7 +8,7 @@
 	import { animalDto } from '../../../modules/profile/dto/AnimalDto';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 
-	let { isOpen = $bindable(), canClose = true, data }  : { 	isOpen?: boolean, canClose: boolean, data : SuperValidated<Infer<typeof animalDto>> } = $props<{}>();
+	let { isOpen = $bindable(), canClose = true, data }  : { 	isOpen?: boolean, canClose: boolean, data : SuperValidated<Infer<typeof animalDto>> } = $props<object>();
 
 	const dispatch = createEventDispatcher();
 
@@ -83,6 +83,8 @@
 
 					photoFile = file;
 
+					$files = [file];
+					
 					const reader = new FileReader();
 					reader.onload = (e) => {
 						if (e.target && e.target.result) {
@@ -125,9 +127,18 @@
 		}
 	}
 
+	function removeMainPhoto() {
+		photoUrl = "";
+		photoFile = null;
+		$files = photoSupplementairesFiles;
+	}
+
 	function removeSupplementaryPhoto(index: number) {
 		photosSupplementaires = photosSupplementaires.filter((_, i) => i !== index);
 		photoSupplementairesFiles = photoSupplementairesFiles.filter((_, i) => i !== index);
+
+		$files = photoFile ? [photoFile, ...photoSupplementairesFiles.filter((_, i) => i !== index)] :
+			[...photoSupplementairesFiles.filter((_, i) => i !== index)];
 	}
 </script>
 
@@ -153,27 +164,59 @@
 								bind:files={$files}
 								{...$constraints.images}
 								multiple
+								class="hidden"
 							/>
-							{#if $errors.images}
-								<p class="text-red-500 mt-1 text-sm">{$errors.images}</p>
-							{/if}
+
+							<div class="mb-6">
+								<h3 class="text-orange-400 text-sm font-normal mb-3">Photo principale</h3>
+								{#if photoUrl}
+									<div class="w-full h-40 border border-gray-200 rounded overflow-hidden relative group mb-3">
+										<img src={photoUrl} alt="Photo principale" class="w-full h-full object-contain" />
+										<button
+											type="button"
+											class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+											onclick={removeMainPhoto}
+										>
+											×
+										</button>
+									</div>
+								{:else}
+									<button
+										type="button"
+										class="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex flex-col justify-center items-center cursor-pointer hover:bg-gray-50 mb-3 bg-gray-50"
+										onclick={handlePhotoChange}
+									>
+										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-8 h-8 text-gray-400 mb-2">
+											<rect x="3" y="3" width="18" height="18" rx="2" />
+											<circle cx="8.5" cy="8.5" r="1.5" />
+											<path d="M21 15l-5-5L5 21" />
+										</svg>
+										<span class="text-gray-500">Cliquez pour ajouter une photo</span>
+									</button>
+								{/if}
+								{#if $errors.images}
+									<p class="text-red-500 mt-1 text-sm">{$errors.images}</p>
+								{/if}
+							</div>
 
 							<div class="mb-6">
 								<h3 class="text-orange-400 text-sm font-normal mb-3">Photos supplémentaires</h3>
 								<div class="flex flex-wrap gap-3">
-									<div
+									<button
+										type="button"
 										class="w-20 h-20 border border-gray-200 rounded flex justify-center items-center cursor-pointer hover:bg-gray-50"
 										onclick={handleAddSupplementaryPhoto}
+										aria-label="Ajouter des images supplémentaires"
 									>
 										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-6 h-6 text-gray-300">
 											<rect x="3" y="3" width="18" height="18" rx="2" />
 											<path d="M12 8v8M8 12h8" />
 										</svg>
-									</div>
+									</button>
 
 									{#each photosSupplementaires as photo, index}
 										<div class="w-20 h-20 border border-gray-200 rounded overflow-hidden relative group">
-											<img src={photo} alt={`Photo supplémentaire ${index + 1}`} class="w-full h-full object-cover" />
+											<img src={photo} alt={`Photo supplémentaire ${index + 1}`} class="w-full h-full object-contain" />
 											<button
 												type="button"
 												class="absolute top-0 right-0 bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
