@@ -49,7 +49,6 @@
 		photoFile = null;
 		photoSupplementairesFiles = [];
 
-		// Fermer le modal
 		isOpen = false;
 	}
 
@@ -136,7 +135,6 @@
 	<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
 		<div class="bg-white w-11/12 max-w-5xl rounded-lg shadow-lg overflow-auto max-h-[90vh]">
 			<div class="p-6">
-				<!-- Header -->
 				<div class="flex justify-end mb-4">
 					{#if canClose}
 						<button class="text-2xl text-gray-500 hover:text-gray-700" onclick={handleClose}>
@@ -146,9 +144,7 @@
 				</div>
 
 				<form method="POST" enctype="multipart/form-data">
-					<!-- Body -->
 					<div class="flex flex-col md:flex-row gap-8">
-						<!-- Photo Section -->
 						<div class="md:w-1/3 flex flex-col">
 							<input
 								type="file"
@@ -219,7 +215,7 @@
 										title="Sexe"
 										name="sex"
 										bind:value={$form.sex}
-										class="font-space-mono w-full text-accent-dark px-3 py-2 border-2 border-gray-200 border-lightless rounded focus:outline-none focus:ring-1 focus:ring-orange-400 appearance-none"
+										class="font-space-mono w-full text-accent-dark px-3 py-2 border-2 border-gray-200 border-lightless rounded focus:outline-none focus:ring-1 focus:ring-orange-400"
 										required
 										{...$constraints.sex}
 									>
