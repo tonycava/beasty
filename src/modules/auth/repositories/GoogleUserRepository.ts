@@ -29,16 +29,21 @@ export const GoogleUserRepository = (): _GoogleUserRepository => {
 
 			const userProfile = (await userProfileResponse.json()) as GoogleUserProfile;
 
+			console.log(userProfile);
+
 			const userInfo = userProfile.names[0];
 			const userPhoto = userProfile.photos[0];
 			const userEmail = userProfile.emailAddresses[0];
+			const userBirthday = userProfile.birthdays[0].date;
 
 			return {
 				firstName: userInfo.givenName,
 				lastName: userInfo.familyName,
 				email: userEmail.value,
 				googleUserId: userInfo.metadata.source.id,
-				profilePicture: userPhoto.url
+				profilePicture: userPhoto.url,
+				birthday: `${userBirthday.day}/${userBirthday.month}/${userBirthday.year}`,
+				bio: "",
 			};
 		}
 	};
