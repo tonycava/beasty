@@ -1,6 +1,6 @@
 import prisma from '$lib/server/db';
 import type { RequestEvent } from '@sveltejs/kit';
-import { GetUserInfoUseCase } from '../../modules/profile/usescases/GetUserInfoUseCase';
+import { GetUserInfoUseCase } from '../../modules/profile/usecase/GetUserInfoUseCase';
 import { SQLiteUserProfileRepository } from '../../modules/profile/repositories/SQLiteUserProfileRepository';
 
 export async function createContext(event: RequestEvent) {

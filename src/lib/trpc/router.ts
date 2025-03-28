@@ -1,9 +1,11 @@
 import { t } from '$lib/trpc/t';
 import { z } from 'zod';
-import { GetUserInfoUseCase } from '../../modules/profile/usescases/GetUserInfoUseCase';
+import { GetUserInfoUseCase } from '../../modules/profile/usecase/GetUserInfoUseCase';
 import { SQLiteUserProfileRepository } from '../../modules/profile/repositories/SQLiteUserProfileRepository';
-import { matcherRouter } from '../../modules/matcher/routes/MatcherRoute';
+import { SubscriptionRouter } from '../../modules/beasty/routes/SubscriptionRouter';
 import { AuthRouter } from '$auth/routes/AuthRouter';
+import { matcherRouter } from '../../modules/matcher/routes/MatcherRoute';
+import { AnimalRouter } from '../../modules/profile/routes/AnimalRouter';
 
 export const router = t.router({
     matcherRouter,
@@ -25,7 +27,9 @@ export const router = t.router({
     greeting: t.procedure.query(async () => {
         return `Hello tRPC v10 @ ${new Date().toLocaleTimeString()}`;
     }),
-    authRouter: AuthRouter
+    authRouter: AuthRouter,
+		subscriptionRouter: SubscriptionRouter,
+		animalRouter: AnimalRouter,
 });
 
 export type Router = typeof router;

@@ -9,11 +9,13 @@
 	import { slide } from 'svelte/transition';
 
 	type Props = {
+		connectionUrl: string;
 		sectionsView?: Record<string, boolean>;
 		isHomePage?: boolean;
 	}
 
 	let {
+		connectionUrl = '',
 		sectionsView = {
 			home: false,
 			beasty: false,
@@ -27,6 +29,8 @@
 		trpc($page).authRouter.logout.mutate();
 		user.set(null);
 	}
+
+	$inspect(connectionUrl)
 
 	$effect(() => {
 		if (!browser || !isHomePage) return;
