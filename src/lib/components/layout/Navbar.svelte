@@ -6,7 +6,7 @@
 	import { trpc } from '$lib/clients/client';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
-	import { fade, slide } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 
 	type Props = {
 		connectionUrl?: string;
