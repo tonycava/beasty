@@ -33,7 +33,7 @@
 
 			user.set(null);
 
-			window.location.href = '/';
+			location.replace('/');
 		} catch (error) {
 			console.error('Erreur lors de la déconnexion:', error);
 		}
