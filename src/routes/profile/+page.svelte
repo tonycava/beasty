@@ -30,12 +30,31 @@
 	let { data } = $props();
 	let isAnimalModalOpen = $state(false);
 	let currentIndex = $state(0);
-
-	  // Liste des images
+	let currentPetIndex = $state(0);
 	let animalImages = $state([
         'corgi.png',
 		'puppy.jpg'
     ]);
+	let petsList = ([
+		{
+			name: "Hunter",
+			age: 2,
+			birthday: "26 décembre",
+			specie: "Chien",
+			breed: "Corgi",
+			gender: "Men",
+			bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper."
+		},
+		{
+			name: "Lila",
+			age: 1,
+			birthday: "03 février",
+			specie: "Chien",
+			breed: "Golden Retriever",
+			gender: "Woman",
+			bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper."
+		},
+	]);
 
 	function openAnimalModal() {
 		isAnimalModalOpen = true;
@@ -83,20 +102,17 @@
 		editPetMode = !editPetMode;
 	}
 
-	function addPicture(){
-		console.log('Add picture');
-	}
-
 	function cancel(){
 		editHumanMode = false;
     	editPetMode = false;
 	}
 
 	function prevPet() {
-
+		console.log(userProfile);
+		currentPetIndex = (currentPetIndex - 1 + petsList.length) % petsList.length;
 	}
 	function nextPet() {
-
+		currentPetIndex = (currentPetIndex + 1) % petsList.length;
 	}
 
 	function nextImage() {
@@ -170,8 +186,9 @@
 					</div>
 					<div class="flex w-full pb-1">
 						<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">E-mail :</p>
-						<p class="w-1/2 lg:w-2/3 ml-2">{userProfile.email}</p>                
+						<p class="w-1/2 lg:w-2/3 ml-2">{userProfile.email}</p>               
 					</div>
+					<input type="hidden" name="id" value="{userProfile.id}" />
 					{#if !editHumanMode}
 						<div class="flex w-full pb-1">
 							<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">Bio :</p>
@@ -284,29 +301,34 @@
 			<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Prénom :</p>
-					<p class="w-1/2 ml-2">Hunter</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].name}</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Âge :</p>
-					<p class="w-1/2 ml-2">2 ans</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].age} ans</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Anniversaire :</p>
-					<p class="w-1/2 ml-2">26 décembre</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].birthday}</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Espèce :</p>
-					<p class="w-1/2 ml-2">Chien</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].specie}</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Race :</p>
-					<p class="w-1/2 ml-2">Corgi</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].breed}</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Sexe :</p>
 					<div class="flex w-1/2 ml-2 text-justify">
-						<p>Mâle</p>
-						<img src="icons/Male.svg" class="w-5 ml-1" alt="Sexe masculin"/>
+						{#if petsList[currentPetIndex].gender == "Men"}
+							<p>Mâle</p>
+							<img src="icons/Male.svg" class="w-5 ml-1" alt="Sexe masculin"/>
+						{:else}
+							<p>Femelle</p>
+							<img src="icons/Female.svg" class="w-5 ml-1" alt="Sexe féminin"/>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -314,10 +336,7 @@
 				<div class="flex flex-col">
 					<p class="text-secondary font-semibold">Biographie :</p>
 					<p class="text-justify">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend
-					at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et
-					malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique
-					ullamcorper.
+						{petsList[currentPetIndex].bio}
 					</p>
 				</div>
 				<div class="flex mt-5">
