@@ -12,8 +12,10 @@ export const handleCookies: Handle = ({ event, resolve }) => {
 	const jwtToken = event.cookies.get(COOKEYS.JWT_TOKEN);
 
 	try {
-		const payload = jwt.verify(jwtToken ?? '', env.JWT_SECRET ?? '') as unknown as AuthTokenPayload;
-		event.locals.user = payload;
+		event.locals.user = jwt.verify(
+			jwtToken ?? '',
+			env.JWT_SECRET ?? ''
+		) as unknown as AuthTokenPayload;
 	} catch {
 		event.locals.user = null;
 	}

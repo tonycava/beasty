@@ -10,6 +10,7 @@
 	import Header from '$lib/components/layout/Header.svelte';
 	import HomeBeasty from '$lib/components/layout/HomeBeasty.svelte';
 	import HomeTryIt from '$lib/components/layout/HomeTryIt.svelte';
+	import { user } from '$auth/stores/UserStore';
 
 	type Props = {
 		data: PageServerData;
@@ -26,6 +27,7 @@
 
 	onMount(() => {
 		if (!browser) return;
+
 		window.addEventListener('scroll', () => {
 			if (window.scrollY === 0) {
 				changeSection('home');

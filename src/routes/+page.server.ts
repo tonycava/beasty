@@ -1,8 +1,16 @@
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import socket from '$lib/server/socket';
 
-export const load: PageServerLoad = async () => {
-	socket.emit('message', 'Hello from the server');
+export const load: PageServerLoad = async ({ locals, url }) => {
 
-	return {};
+	const user = locals.user;
+
+	console.log('user', user);
+	if (user && url.pathname === '/') {
+		throw redirect(302, '/beastyMatcher');
+	}
+
+	return {
+		url: url.href,
+	};
 };
