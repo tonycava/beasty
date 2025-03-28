@@ -8,6 +8,7 @@ import { SQLiteAnimalRepository } from '../../modules/profile/repositories/SQLit
 import { userDto } from '../../modules/profile/dto/UserDto';
 import { UpdateUserUseCase } from '../../modules/profile/usecase/UpdateUserUseCase';
 import { SQLiteUserProfileRepository } from '../../modules/profile/repositories/SQLiteUserProfileRepository';
+import { UpdateAnimalUseCase } from '../../modules/profile/usecase/UpdateAnimalUseCase';
 
 export const load = async () => {
 	const form = await superValidate(zod(animalDto));
@@ -38,15 +39,30 @@ export const actions = {
 
 	updatePet: async (event) => {
 		// Implémenter la modification d'un animal
+		const formData = await event.request.formData();
+		const form = await superValidate(formData, zod(animalDto));
+
+		if(!form.valid) {
+			return fail(400, withFiles({ form }));
+		}
+
+		const updateAnimalUseCase = await UpdateAnimalUseCase({
+			animalRepository: SQLiteAnimalRepository()
+		}).execute(form.data);
+
+		if(updateAnimalUseCase.isSuccess) {
+			return updateAnimalUseCase.data;
+		}
+
+		return message(form, 'Form posted successfully!');
 	},
 
 	
 	updateUser: async (event) => {
 		// Implémenter la modification d'un utilisateur (seul la bio peut changer)
 		const formData = await event.request.formData();
-		console.log(formData);
 		const form = await superValidate(formData, zod(userDto));
-		console.log(form);
+
 		if(!form.valid) {
 			return fail(400, withFiles({ form }));
 		}

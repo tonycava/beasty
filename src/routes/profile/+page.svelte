@@ -9,6 +9,7 @@
 	import type { User } from '../../modules/profile/entities/User';
 	import AnimalModal from '$lib/components/layout/AnimalModal.svelte';
 	import type { AnimalDto } from '../../modules/profile/dto/AnimalDto';
+	import { bounceIn } from 'svelte/easing';
 
 	let userProfile = $state<User | null>(null);
 	let animals = $state<any[]>([]);
@@ -20,7 +21,7 @@
 	let error = $state<string | null>(null);
 	let editHumanMode = $state(false);
 	let editPetMode = $state(false);
-
+	
 	const formatter = new Intl.DateTimeFormat('fr-FR', {
 		year: 'numeric',
 		month: 'long',
@@ -37,20 +38,22 @@
     ]);
 	let petsList = ([
 		{
-			name: "Hunter",
+			firstName: "Hunter",
 			age: 2,
 			birthday: "26 décembre",
-			specie: "Chien",
+			species: "Chien",
 			breed: "Corgi",
+			weight: 7,
 			gender: "Men",
 			bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper."
 		},
 		{
-			name: "Lila",
+			firstName: "Lila",
 			age: 1,
 			birthday: "03 février",
-			specie: "Chien",
+			species: "Chien",
 			breed: "Golden Retriever",
+			weight: 3,
 			gender: "Woman",
 			bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper."
 		},
@@ -108,7 +111,6 @@
 	}
 
 	function prevPet() {
-		console.log(userProfile);
 		currentPetIndex = (currentPetIndex - 1 + petsList.length) % petsList.length;
 	}
 	function nextPet() {
@@ -163,10 +165,11 @@
             </div>
         {:else}
             <div class="w-full md:w-1/3 flex justify-center items-center">
-				<!--  -->
                 <img src={userProfile.profilePicture} class="md:h-64 h-48 md:w-52 w-40 mt-6 rounded-3xl shadow-[-12px_-12px_#FFDB78] md:shadow-[-24px_-24px_#FFDB78] object-cover" alt="Profil"/>
             </div>
-			<form method="POST" action="?/updateUser" use:enhance class="flex flex-col lg:flex-row w-full md:w-2/3 justify-around mt-5 md:mt-0">
+			<form method="POST" action="?/updateUser" use:enhance={() => {
+				editHumanMode = !editHumanMode;
+			}} class="flex flex-col lg:flex-row w-full md:w-2/3 justify-around mt-5 md:mt-0">
 				<div class="w-full lg:w-3/5 flex flex-col justify-center">
 					<div class="flex w-full pb-1">
 						<p class="w-1/2 lg:w-1/3 text-right text-secondary font-semibold">Prénom :</p>
@@ -227,8 +230,8 @@
 		<div class="flex flex-col lg:flex-row justify-center max-[450px]:w-4/5 w-2/3">
 			<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
 				<div class="flex w-full pb-1">
-					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="first_name">Prénom :</label>
-					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="first_name" name="first_name" value="Hunter" required/>
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="firstName">Prénom :</label>
+					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="firstName" name="firstName" value={petsList[currentPetIndex].firstName} required/>
 				</div>
 				<div class="flex w-full pb-1">
 					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="age_pet">Âge :</label>
@@ -236,27 +239,31 @@
 					<p class="ml-1">ans</p>
 				</div>
 				<div class="flex w-full pb-1">
-					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="birthday_pet">Anniversaire :</label>
-					<input type="date" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="birthday_pet" name="birthday_pet" required/>
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="birthday">Anniversaire :</label>
+					<input type="date" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="birthday_pet" name={petsList[currentPetIndex].birthday} required/>
 				</div>
 				<div class="flex w-full pb-1">
-					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="specie">Espèce :</label>
-					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="specie" name="specie" value="Chien" required/>					
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="species">Espèce :</label>
+					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="species" name="specie" value={petsList[currentPetIndex].species} required/>					
 				</div>
 				<div class="flex w-full pb-1">
 					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="breed">Race :</label>
-					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="breed" name="breed" value="Corgi" required/>
+					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="breed" name="breed" value={petsList[currentPetIndex].breed} required/>
+				</div>
+				<div class="flex w-full pb-1">
+					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="weight">Poids :</label>
+					<input type="text" class="border-2 border-accent rounded-lg pt-0.2 pb-0.2 pl-1 ml-2" id="weight" name="weight" value={petsList[currentPetIndex].weight} required/>
 				</div>
 				<div class="flex w-full pb-1">
 					<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="gender">Sexe :</label>
 					<div class="flex w-1/2 lg:w-2/3 ml-2 text-justify">	
 						<div class="flex items-center ml-2">
-							<input type="radio" id="gender" name="gender" value="Mâle" checked/>
+							<input type="radio" id="sex" name="sex" value="Mâle" checked/>
 							<p class="ml-1">Mâle</p>
 							<img src="icons/Male.svg" class="w-5 ml-1 mr-2" alt="Sexe masculin"/>
 						</div>
 						<div class="flex items-center ml-3">
-							<input type="radio" id="gender" name="gender" value="Femelle"/>
+							<input type="radio" id="sex" name="sex" value="Femelle"/>
 							<p class="ml-1">Femelle</p>
 							<img src="icons/Female.svg" class="w-5 ml-1" alt="Sexe féminin"/>
 						</div>
@@ -265,8 +272,8 @@
 			</div>
 			<div class="w-full lg:w-1/2 flex flex-col justify-center pl-5 lg:pl-0 pr-5 lg:pr-0 mb-5 lg:mb-0">
 				<div class="flex flex-col">
-					<label class="text-secondary font-semibold" for="bio_pet">Biographie :</label>
-					<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 pr-1 ml-2 text-justify overflow-x-hidden" rows="10" cols="35" id="bio_pet" name="bio_pet">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper.</textarea>
+					<label class="text-secondary font-semibold" for="bio">Biographie :</label>
+					<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 pr-1 ml-2 text-justify overflow-x-hidden" rows="10" cols="35" id="bio" name="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper.</textarea>
 				</div>
 				<div class="flex mt-5">
 					<button type="submit" class="bg-accent text-white rounded-full w-1/2">Sauvegarder</button>
@@ -301,7 +308,7 @@
 			<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Prénom :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].name}</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].firstName}</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Âge :</p>
@@ -313,11 +320,15 @@
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Espèce :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].specie}</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].species}</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Race :</p>
 					<p class="w-1/2 ml-2">{petsList[currentPetIndex].breed}</p>
+				</div>
+				<div class="flex w-full pb-1">
+					<p class="w-1/2 text-right text-secondary font-semibold">Poids :</p>
+					<p class="w-1/2 ml-2">{petsList[currentPetIndex].weight} kg</p>
 				</div>
 				<div class="flex w-full pb-1">
 					<p class="w-1/2 text-right text-secondary font-semibold">Sexe :</p>
