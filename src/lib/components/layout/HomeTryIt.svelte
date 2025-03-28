@@ -40,11 +40,11 @@
   <div class="relative">
     <img src="/home-chat.png" alt="chats" class="w-full"/>
   </div>
-  <div class="absolute w-xs inset-x-0 bottom-0 shadow-lg w-3/4 overflow-hidden rounded-xl bg-white m-auto text-accent">
-    <div class="p-8 flex flex-col items-center">
+  <div class="absolute -mt-16 inset-x-0 shadow-lg w-3/4 overflow-hidden rounded-xl bg-white m-auto text-accent">
+    <div class="p-8 flex flex-col items-center gap-5">
       <h1 class="font-semibold text-4xl tracking-wid uppercase">Essayez beasty</h1>
       <h2 class="text-2xl">Je n'ai pas d'idée mais c'est génial !</h2>
-      <a href="#" class="bg-accent text-2xl text-white p-2 font-semibold">
+      <a href="#" class="bg-accent text-2xl text-white p-2 pl-16 pr-16 font-semibold">
         Rencontrez-vous
       </a>
     </div>
