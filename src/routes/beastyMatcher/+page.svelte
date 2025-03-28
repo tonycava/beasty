@@ -1,286 +1,292 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getMatcher, createMatch } from '$lib/api/matcher';
 	import { generateUUID } from '$lib/utils/generateUUID';
+	import { MatchStatus } from '../../modules/matcher/entities/Match';
 	import { user } from '$auth/stores/UserStore';
 	import type { Animal } from '../../modules/matcher/entities/Animal';
+	import Navbar from '$lib/components/layout/Navbar.svelte';
+	import Footer from '$lib/components/layout/Footer.svelte';
 	import { trpc } from '$lib/clients/client';
+  import confetti from 'canvas-confetti';
 
 	let animals: Animal[] = [];
 	let selectedAnimal: Animal | null = null;
 	let currentAnimalIndex = 0;
 	let isAnimating = false;
 	let direction = '';
+	let matchedAnimalIds: string[] = [];
+  let showRedBackground = false;
 
-	// Récupération des données au chargement de la page
 	onMount(async () => {
 		try {
 			const data = await trpc().matcherRouter.getMatcher.query($user?.id!);
-			console.log('Données récupérées avec succès', {
-				nombreAnimaux: data.animals.length,
-				animaux: data.animals,
-				selectedAnimal: data.selectedAnimal
-			});
+
 			animals = data.animals;
 			selectedAnimal = data.selectedAnimal;
+
+			const matchedAnimalIds = data.animals.map((match: any) =>
+				match.animalInitiatorId === $user?.id ? match.animalMatchedId : match.animalInitiatorId
+			);
+
+			animals = animals.filter((animal) => !matchedAnimalIds.includes(animal.id));
 		} catch (error) {
 			console.error('Erreur lors de la récupération des animaux', error);
 		}
 	});
 
-	// Fonction pour gérer les actions "match" et "reject"
-	async function handleAction(action: 'accepted' | 'rejected') {
-		if (isAnimating || !selectedAnimal || !animals[currentAnimalIndex]) return;
+	async function handleAction(action: MatchStatus.ACCEPTED | MatchStatus.REJECTED) {
+    if (isAnimating || !selectedAnimal || !animals[currentAnimalIndex]) return;
 
-		isAnimating = true;
-		direction = action === 'accepted' ? 'left' : 'right';
+    isAnimating = true;
+    direction = action === MatchStatus.ACCEPTED ? 'left' : 'right';
 
-		const animalMatched = animals[currentAnimalIndex];
+    if (action === MatchStatus.ACCEPTED) {
+      launchConfetti();
+    }
 
-		// Ajouter un effet de brouillard
-		const fogClass = action === 'accepted' ? 'fog-green' : 'fog-red';
-		document.body.classList.add(fogClass); // Appliquer le brouillard au body
+    if (action === MatchStatus.REJECTED) {
+      showRedBackground = true;
+    }
 
-		// Animation de la carte
-		const card = document.querySelector('.top-card');
-		card?.classList.add('animate-out');
+    setTimeout(() => {
+      showRedBackground = false;
+    }, 1000);
 
-		try {
-			await trpc().matcherRouter.createMatch.mutate({
-				id: generateUUID(),
-				animalInitiator: { id: selectedAnimal.id },
-				animalMatched: { id: animalMatched.id },
-				status: action
-			});
-			console.log('Match créé avec succès');
-		} catch (error) {
-			console.error('Erreur lors de la création du match', error);
-		}
+    const animalMatched = animals[currentAnimalIndex];
 
-		// Animation puis passage à l'animal suivant
-		setTimeout(() => {
-			currentAnimalIndex++;
-			isAnimating = false;
-			document.body.classList.remove(fogClass); // Retirer l'effet de brouillard
-			card?.classList.remove('animate-out'); // Retirer l'animation
-		}, 2000); // Durée de l'animation
-	}
+    if (!selectedAnimal?.id || !animalMatched?.id) {
+      console.error("🚨 Erreur : ID manquant !");
+      return;
+    }
 
-	// Générer un style unique pour chaque carte en arrière-plan
+    try {
+      await trpc().matcherRouter.createMatch.mutate({
+        id: generateUUID(),
+        animalInitiatorId: selectedAnimal.id,
+        animalMatchedId: animalMatched.id,
+        status: action
+      });
+
+      setTimeout(() => {
+        matchedAnimalIds.push(animalMatched.id);
+        animals = animals.filter(animal => !matchedAnimalIds.includes(animal.id));
+
+        if (currentAnimalIndex < animals.length - 1) {
+          currentAnimalIndex++;
+        } else {
+          currentAnimalIndex = 0;
+        }
+
+        isAnimating = false;
+      }, 700);
+    } catch (error) {
+      console.error('Erreur lors de la création du match', error);
+      isAnimating = false;
+    }
+  }
+
 	function getCardStyle(index: number, totalCards: number) {
-		// Si c'est la dernière carte disponible
 		if (totalCards === 1 && index === 0) {
-			return ''; // Pas de rotation ni de décalage
+			return '';
 		}
-
-		// Si c'est la première carte (celle avec les infos)
 		if (index === 0) {
-			return 'transform: rotate(0deg);'; // Carte principale horizontale
+			return 'transform: rotate(0deg);';
 		}
 
-		const translateY = (index - (totalCards - 1)) * 20; // Augmenter le décalage vertical
-		const rotation = (index % 2 === 0 ? 10 : -10); // Rotation alternée entre 10 et -10 degrés
+		const translateY = (index - (totalCards - 1)) * 20;
+		const rotation = index % 2 === 0 ? 10 : -10;
 
-		return `transform: translateY(${translateY}px) rotate(${rotation}deg);`; // Appliquer la rotation
+		return `transform: translateY(${translateY}px) rotate(${rotation}deg);`;
 	}
+
+  function launchConfetti() {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  }
 </script>
 
-<!-- Conteneur principal -->
-<div class="flex h-screen w-screen items-center justify-center">
-	<div class="relative h-[550px] w-[950px]">
-		{#if animals.length === 0}
-			<!-- carte vide -->
-			<div class="flex h-full items-center justify-center">
-				<p class="text-xl">Aucun animal disponible</p>
-			</div>
-		{:else}
-		{#each animals
-			.slice(currentAnimalIndex, currentAnimalIndex + Math.min(4, animals.length - currentAnimalIndex))
-			as animal, index (animal.id)}
-			<!-- Carte animale -->
-			<div
-				class="card {index === 0 ? 'top-card' : ''}"
-				class:left={isAnimating && direction === 'left' && index === 0}
-				class:right={isAnimating && direction === 'right' && index === 0}
-				style={getCardStyle(index, Math.min(4, animals.length - currentAnimalIndex))}
-			>
-				{#if index === 0}
-						<div class="info" style="flex-direction: row;">
-							<div class="image"></div>
-							<div class="details">
-								<div class="name">{animal.firstName}</div>
-								<div>{animal.birthday}</div>
-							</div>
-						</div>
-
-						<!-- Description -->
-						<div class="description">
-							<div class="title">Description :</div>
-							<div class="text">{animal.bio}</div>
-							<div class="divider"></div>
-							<ul class="list">
-								<li><span>Anniversaire :</span> {animal.birthday || 'Non défini'}</li>
-								<li><span>Espèce :</span> {animal.species || 'Non défini'}</li>
-								<li><span>Race :</span> {animal.breed || 'Non défini'}</li>
-								<li><span>Sexe :</span> {animal.sex || 'Non défini'}</li>
-							</ul>
-						</div>
-
-						<!-- Boutons de validation -->
-						<div class="buttons">
-							<button
-								on:click={() => handleAction('accepted')}
-								class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#3B7080]"
-								aria-label="Match"
-							>
-								<div class="flex h-[50px] w-[50px] items-center justify-center bg-green-300"></div>
-							</button>
-							<button
-								on:click={() => handleAction('rejected')}
-								class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#FF9F63]"
-								aria-label="Reject"
-							>
-								<div class="flex h-[50px] w-[50px] items-center justify-center bg-red-300"></div>
-							</button>
-						</div>
-					{/if}
-				</div>
-			{/each}
-		{/if}
+<div class="flex flex-col min-h-screen bg-gradient">
+	<div class="fixed top-0 left-0 right-0 z-50">
+		<Navbar />
+		<div class="h-32 bg-white"></div>
 	</div>
+  {#if showRedBackground}
+    <div class="overlay"></div>
+  {/if}
+	<div class="flex h-screen w-screen items-center justify-center mt-32">
+		<div class="relative h-[550px] w-[950px]">
+			{#if animals.length === 0}
+				<div class="flex h-full items-center justify-center">
+					<p class="text-xl">Aucun animal disponible</p>
+				</div>
+			{:else}
+				{#each animals.slice(currentAnimalIndex, currentAnimalIndex + Math.min(4, animals.length - currentAnimalIndex)) as animal, index (animal.id)}
+					<div
+						class="card absolute w-[850px] h-[450px] rounded-[10px] border-2 border-gray-400 bg-[#fff0c8] p-[20px]
+            {index === 0 ? 'top-card z-[10]' : ''} 
+            {isAnimating && index === 0
+							? direction === 'left'
+								? 'animate-left'
+								: 'animate-right'
+							: ''}"
+						style={getCardStyle(index, Math.min(4, animals.length - currentAnimalIndex))}
+					>
+						{#if index === 0}
+							<div
+								class="info flex flex-col items-center justify-start w-[336px] h-[400px] bg-[#3b7080] rounded-[10px] p-[20px]"
+							>
+								<div class="image w-[275px] h-[275px] bg-gray-500 mb-[10px]"></div>
+								<div class="details text-white font-poppins text-[30px] text-center">
+									<div class="name">{animal.firstName}</div>
+									<div>{animal.birthday}</div>
+								</div>
+							</div>
+
+							<div
+								class="description absolute left-[400px] top-[25px] w-[50%] bg-[#f5f5f5] rounded-[10px] p-[20px] shadow-lg"
+							>
+								<div class="title font-bold text-[#ff9f63] text-[17px]">Description :</div>
+								<div class="text mt-[10px] text-[15px]">{animal.bio}</div>
+								<div class="divider w-full h-[2px] bg-black my-[10px]"></div>
+								<ul class="list mt-[10px] text-[20px]">
+									<li class="flex justify-between mb-[5px]">
+										<span class="font-bold text-[#ff9f63]">Anniversaire :</span>
+										{animal.birthday || 'Non défini'}
+									</li>
+									<li class="flex justify-between mb-[5px]">
+										<span class="font-bold text-[#ff9f63]">Espèce :</span>
+										{animal.species || 'Non défini'}
+									</li>
+									<li class="flex justify-between mb-[5px]">
+										<span class="font-bold text-[#ff9f63]">Race :</span>
+										{animal.breed || 'Non défini'}
+									</li>
+									<li class="flex justify-between mb-[5px]">
+										<span class="font-bold text-[#ff9f63]">Sexe :</span>
+										{animal.sex || 'Non défini'}
+									</li>
+								</ul>
+							</div>
+
+							<div class="buttons absolute bottom-[10px] right-[10px] flex gap-[10px]">
+								<button
+									on:click={() => handleAction(MatchStatus.ACCEPTED)}
+									class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#3B7080]"
+									aria-label="Match"
+								>
+									<div
+										class="flex h-[50px] w-[50px] items-center justify-center bg-green-300"
+									></div>
+								</button>
+								<button
+									on:click={() => handleAction(MatchStatus.REJECTED)}
+									class="flex h-[65px] w-[72px] items-center justify-center rounded-[20px] bg-[#FF9F63]"
+									aria-label="Reject"
+								>
+									<div class="flex h-[50px] w-[50px] items-center justify-center bg-red-300"></div>
+								</button>
+							</div>
+						{/if}
+					</div>
+				{/each}
+			{/if}
+		</div>
+	</div>
+	<Footer />
 </div>
 
 <style>
 	.card {
-		position: absolute;
-		width: 850px;
-		height: 450px;
-		border-radius: 10px;
-		border: 2px solid gray;
-		background-color: #fff0c8;
-		padding: 20px;
 		transition:
-			transform 0.5s,
-			opacity 0.5s;
+			transform 0.5s ease-in-out,
+			background-color 0.5s ease-in-out;
 	}
 
-	/* 🎭 Animation de départ */
-	.card.left {
-		transform: translateX(-1000px) rotate(-45deg);
+	.left {
+		transform: translateX(-1000px) rotate(-20deg);
 		opacity: 0;
 	}
 
-	.card.right {
-		transform: translateX(1000px) rotate(45deg);
+	.right {
+		transform: translateX(1000px) rotate(20deg);
 		opacity: 0;
 	}
 
-	/* ✅ Carte principale */
-	.top-card {
-		z-index: 10;
+	.bg-gradient {
+		background:
+			radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.8) 0%, transparent 70%),
+			radial-gradient(circle at 80% 10%, rgba(200, 200, 200, 0.5) 0%, transparent 50%),
+			radial-gradient(circle at 40% 60%, rgba(220, 220, 220, 0.6) 0%, transparent 60%),
+			radial-gradient(circle at 70% 50%, rgba(240, 240, 240, 0.7) 0%, transparent 40%),
+			linear-gradient(45deg, rgba(245, 245, 245, 0.4), rgba(230, 230, 230, 0.5));
+		background-size: 200% 200%;
+		animation: moveGradient 20s ease infinite;
+	}
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 0.4); /* Rouge avec opacité */
+    z-index: 5;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+	@keyframes moveGradient {
+		0% {
+			background-position: 0% 0%;
+		}
+		25% {
+			background-position: 100% 0%;
+		}
+		50% {
+			background-position: 100% 100%;
+		}
+		75% {
+			background-position: 0% 100%;
+		}
+		100% {
+			background-position: 0% 0%;
+		}
 	}
 
-	.info {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: start;
-		width: 336px;
-		height: 400px;
-		background-color: #3b7080;
-		border-radius: 10px;
-		padding: 20px;
+	@keyframes moveLeft {
+		0% {
+			transform: translateX(0) rotate(0deg);
+			opacity: 1;
+		}
+		100% {
+			transform: translateX(-1200px) rotate(-45deg);
+			opacity: 0;
+		}
 	}
 
-	.image {
-		width: 275px;
-		height: 275px;
-		background-color: gray;
-		margin-bottom: 10px;
+	@keyframes moveRight {
+		0% {
+			transform: translateX(0) rotate(0deg);
+			opacity: 1;
+		}
+		100% {
+			transform: translateX(1200px) rotate(45deg);
+			opacity: 0;
+		}
 	}
 
-	.divider {
-		width: 100%;
-		height: 2px;
-		background-color: white;
-		margin: 10px 0;
+	.animate-left {
+		animation: moveLeft 0.7s ease-in-out forwards;
 	}
 
-	.details {
-		color: white;
-		font-family: 'Poppins', sans-serif;
-		font-size: 30px;
-		text-align: center;
-	}
-
-	.description {
-		position: absolute;
-		left: 400px;
-		top: 25px;
-		width: 50%;
-		background-color: #f5f5f5;
-		border-radius: 10px;
-		padding: 20px;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	}
-
-	.title {
-		font-weight: bold;
-		color: #ff9f63;
-		font-size: 17px;
-	}
-
-	.text {
-		margin-top: 10px;
-		font-size: 15px;
-	}
-
-	.list {
-		margin-top: 10px;
-		font-size: 20px;
-	}
-
-	.list li {
-		display: flex;
-		justify-content: space-between;
-		margin-bottom: 5px;
-	}
-
-	.list span {
-		font-weight: bold;
-		color: #ff9f63;
-	}
-
-	.buttons {
-		position: absolute;
-		bottom: 10px;
-		right: 10px;
-		display: flex;
-		gap: 10px;
-	}
-
-	/* Ajouter les styles pour le brouillard */
-	body.fog-green {
-		background: rgba(0, 255, 0, 0.5); /* Brouillard vert */
-		transition: background 0.5s ease;
-	}
-
-	body.fog-red {
-		background: rgba(255, 0, 0, 0.5); /* Brouillard rouge */
-		transition: background 0.5s ease;
-	}
-
-	.card.animate-out {
-		transition: transform 2s ease, opacity 2s ease;
-	}
-
-	.card.left.animate-out {
-		transform: translateX(-100vw) rotate(-45deg);
-		opacity: 0;
-	}
-
-	.card.right.animate-out {
-		transform: translateX(100vw) rotate(45deg);
-		opacity: 0;
+	.animate-right {
+		animation: moveRight 0.7s ease-in-out forwards;
 	}
 </style>

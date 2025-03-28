@@ -1,13 +1,14 @@
-import type { Match } from "../entities/Match";
+import type { Match, MatchStatus } from "../entities/Match";
 
 export interface IMatcherRepositoryCreateMatch {
     createMatch(match: Match): Promise<{ 
         id: string; 
         animalInitiatorId: string; 
         animalMatchedId: string; 
-        status: string; 
+        status: MatchStatus; 
         createdAt: Date; 
-        updatedAt: Date; }>;
+        updatedAt: Date; 
+    }>;
 }
 
 export type IMatcherRepositoryCreate = IMatcherRepositoryCreateMatch;
