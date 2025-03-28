@@ -10,6 +10,7 @@
 	import Header from '$lib/components/layout/Header.svelte';
 	import HomeBeasty from '$lib/components/layout/HomeBeasty.svelte';
 	import HomeTryIt from '$lib/components/layout/HomeTryIt.svelte';
+	import HomePremium from '$lib/components/layout/HomePremium.svelte';
 
 	type Props = {
 		data: PageServerData;
@@ -86,7 +87,7 @@
 		changeSection('premium');
 	}}
 >
-	<span> Premium </span>
+	<HomePremium />
 </div>
 
 <Footer />
