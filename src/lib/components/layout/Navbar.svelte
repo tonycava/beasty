@@ -9,11 +9,13 @@
 	import { slide } from 'svelte/transition';
 
 	type Props = {
+		connectionUrl: string;
 		sectionsView?: Record<string, boolean>;
 		isHomePage?: boolean;
 	}
 
 	let {
+		connectionUrl = '',
 		sectionsView = {
 			home: false,
 			beasty: false,
