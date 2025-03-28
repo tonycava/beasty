@@ -145,7 +145,7 @@
 					{/if}
 				</div>
 
-				<form method="POST" enctype="multipart/form-data">
+				<form method="POST" action="?/addPet" enctype="multipart/form-data">
 					<!-- Body -->
 					<div class="flex flex-col md:flex-row gap-8">
 						<!-- Photo Section -->

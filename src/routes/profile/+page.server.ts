@@ -4,7 +4,6 @@ import { animalDto } from '../../modules/profile/dto/AnimalDto';
 import { fail } from '@sveltejs/kit';
 import { trpc } from '$lib/clients/client';
 import { CreateAnimalUseCase } from '../../modules/profile/usecase/CreateAnimalUseCase';
-import { UpdateAnimalUseCase } from '../../modules/profile/usecase/UpdateAnimalUseCase';
 import { SQLiteAnimalRepository } from '../../modules/profile/repositories/SQLiteAnimalRepository';
 
 export const load = async () => {
@@ -14,7 +13,7 @@ export const load = async () => {
 };
 
 export const actions = {
-	default: async (event) => {
+	addPet: async (event) => {
 		const formData = await event.request.formData();
 		const form = await superValidate(formData, zod(animalDto));
 
@@ -32,11 +31,10 @@ export const actions = {
 
 		return message(form, 'Form posted successfully!');
 	},
-	// updatePet: async (event) => {
-	
-	// }
-
-	// updateUser: async (event) => {
-		
-	// }
+	updatePet: async (event) => {
+	// Implémenter la modification d'un animal
+	},
+	updateUser: async (event) => {
+	// Implémenter la modification d'un utilisateur (seul la bio peut changer)
+	}
 };
