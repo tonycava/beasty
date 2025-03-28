@@ -27,14 +27,14 @@
 </script>
 
 <fieldset class="flex gap-1 flex-col">
-	<p class="text-primary font-poppins-regular mt-2">{title}</p>
+	<p class="text-secondary font-poppins-regular mt-2">{title}</p>
 	<input
 		use:typeAction
 		{...props}
 		{name}
 		{placeholder}
 		bind:value
-		class="font-space-mono bg-bg-dark text-white p-2 border-2 border-lightless rounded w-full focus-visible:outline-none focus-visible:border-primary-medium {className}"
+		class="font-space-mono bg-bg-dark text-accent-dark p-2 border-2 border-lightless rounded w-full focus-visible:outline-none focus-visible:border-primary-medium {className}"
 	/>
 </fieldset>
 
