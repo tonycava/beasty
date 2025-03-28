@@ -37,8 +37,9 @@
        </div>
     </div>
 </div>
-<div class="relative">
-  <img src="/home-chat.png" alt="chats" class="w-full"/>
+  <div class="relative">
+    <img src="/home-chat.png" alt="chats" class="w-full"/>
+  </div>
   <div class="absolute w-xs inset-x-0 bottom-0 shadow-lg w-3/4 overflow-hidden rounded-xl bg-white m-auto text-accent">
     <div class="p-8 flex flex-col items-center">
       <h1 class="font-semibold text-4xl tracking-wid uppercase">Essayez beasty</h1>
@@ -47,7 +48,6 @@
         Rencontrez-vous
       </a>
     </div>
-  </div>
 </div>
 
 
