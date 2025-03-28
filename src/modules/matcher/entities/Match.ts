@@ -1,10 +1,18 @@
+export enum MatchStatus {
+    PENDING = "pending",
+    ACCEPTED = "accepted",
+    REJECTED = "rejected"
+}
+
 export type Match = {
+    id: string;
     animalInitiatorId: string;
     animalMatchedId: string;
     animalInitiator: any;
     animalMatched: any;
-	status: any;
-    id: string;
+    status: MatchStatus;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
-export type MatchWhitoutId = Omit<Match, 'id'>;
+export type MatchWithoutId = Omit<Match, 'id'>;

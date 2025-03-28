@@ -1,9 +1,11 @@
 import prisma from '$lib/server/db';
 import type { IMatcherRepositoryGet } from '../interfaces/IMatcherRepositoryGet';
+import { MatchStatus } from '../entities/Match'; // Importation du type MatchStatus
 
 export const SQLiteMatcherRepositoryGet = (): IMatcherRepositoryGet => {
     return {
         getMyMatches: async (animalId: string) => {
+            // Récupérer tous les matchs acceptés pour l'animal
             const matches = await prisma.match.findMany({
                 where: {
                     AND: [
@@ -13,13 +15,25 @@ export const SQLiteMatcherRepositoryGet = (): IMatcherRepositoryGet => {
                         },
                         {
                             animalMatchedId: {
-                                in: await prisma.match.findMany({
+                                // Filtrer les animaux déjà matchés ou rejetés
+                                notIn: await prisma.match.findMany({
                                     where: {
-                                        animalMatchedId: animalId,
-                                        status: "accepted"
+                                        OR: [
+                                            {
+                                                animalMatchedId: animalId,
+                                                status: "rejected"
+                                            },
+                                            {
+                                                animalInitiatorId: animalId,
+                                                status: "rejected"
+                                            }
+                                        ],
                                     },
-                                    select: { animalInitiatorId: true }
-                                }).then(matches => matches.map(match => match.animalInitiatorId))
+                                    select: { animalMatchedId: true, animalInitiatorId: true }
+                                }).then(matches => [
+                                    ...matches.map(match => match.animalMatchedId),
+                                    ...matches.map(match => match.animalInitiatorId)
+                                ])
                             }
                         }
                     ]
@@ -30,9 +44,11 @@ export const SQLiteMatcherRepositoryGet = (): IMatcherRepositoryGet => {
                 }
             });
 
-            return matches;
+            // Adapter les données pour correspondre au type Match
+            return matches.map(match => ({
+                ...match,
+                status: match.status as MatchStatus // Conversion explicite du status en MatchStatus
+            }));
         }
     };
 };
-
-

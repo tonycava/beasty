@@ -6,6 +6,8 @@ import { SQLiteMatcherRepository } from '../repositories/SQLiteMatcherRepository
 import { SQLiteMatcherRepositoryCreate } from '../repositories/SQLiteMatcherRepositoryCreate';
 import { SQLiteMatcherRepositoryGet } from '../repositories/SQLiteMatcherRepositoryGet';
 import { z } from 'zod';
+import { MatchStatus } from '../entities/Match';
+
 export const matcherRouter = t.router({
     getMatcher: t.procedure
         .input(z.string().uuid())
@@ -20,35 +22,41 @@ export const matcherRouter = t.router({
             return { animals: [], selectedAnimal: null };
         }),
 
-    createMatch: t.procedure
+        createMatch: t.procedure
         .input(
             z.object({
                 id: z.string().uuid(),
-                animalInitiator: z.object({
-                    id: z.string().uuid(),
-                }),
-                animalMatched: z.object({
-                    id: z.string().uuid(),
-                }),
-                status: z.enum(['accepted', 'rejected']),
+                animalInitiatorId: z.string().uuid(),
+                animalMatchedId: z.string().uuid(),
+                status: z.nativeEnum(MatchStatus), // Assure que le statut est une enum valide
             })
         )
         .mutation(async ({ input }) => {
-            const createMatchUseCase = await CreateMatchUseCase({
-                matcherRepositoryCreate: SQLiteMatcherRepositoryCreate(),
-            }).execute(input);
+            try {
+                const createMatchUseCase = await CreateMatchUseCase({
+                    matcherRepositoryCreate: SQLiteMatcherRepositoryCreate(),
+                }).execute({
+                    ...input,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    animalInitiator: null,
+                    animalMatched: null,
+                });
 
-            if (createMatchUseCase.isSuccess) {
-                return createMatchUseCase.data;
+                if (createMatchUseCase.isSuccess) {
+                    return createMatchUseCase.data;
+                }
+
+                throw new Error('Erreur lors de la création du match');
+            } catch (error) {
+                console.error("Erreur dans createMatch :", error);
+                throw new Error("Erreur serveur lors de la création du match.");
             }
-
-            throw new Error('Erreur lors de la création du match');
         }),
 
-        getMyMatches: t.procedure
+    getMyMatches: t.procedure
         .input(z.string().uuid()) 
         .query(async ({ input }) => {
-
             const getMyMatchesUseCase = await GetMyMatchesUseCase({
                 matcherRepositoryGet: SQLiteMatcherRepositoryGet(),
             }).execute(input);
@@ -60,15 +68,11 @@ export const matcherRouter = t.router({
             throw new Error("Erreur lors de la récupération des matchs");
         }),
 
-        getAnimalsByUser: t.procedure
+    getAnimalsByUser: t.procedure
         .input(z.string().uuid())
         .query(async ({ input }) => {
-
             const repository = SQLiteMatcherRepository();
             const animals = await repository.getAnimalsByUser(input);
-
             return animals;
         }),
-
-
 });

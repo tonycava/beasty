@@ -16,6 +16,7 @@
 	let {
 		sectionsView = {
 			home: false,
+			beastyMatcher: false,
 			beasty: false,
 			tryIt: false,
 			premium: false
@@ -76,6 +77,9 @@
 				{@render sections("Accueil", sectionsView.home)}
 			</a>
 			{#if $user}
+				<a href="/beastyMatcher" class="cursor-pointer">
+					{@render sections("BeastyMatcher", sectionsView.beastyMatcher)}
+				</a>
 				<a href="/profile" class="cursor-pointer">
 					{@render sections("Profil", sectionsView.beasty)}
 				</a>
