@@ -30,6 +30,8 @@
 		user.set(null);
 	}
 
+	$inspect(connectionUrl)
+
 	$effect(() => {
 		if (!browser || !isHomePage) return;
 

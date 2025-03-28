@@ -55,7 +55,7 @@
 </script>
 
 <Navbar
-	connectionUrl={data.url}
+	connectionUrl="/login"
 	bind:sectionsView
 	isHomePage={true}
 />
