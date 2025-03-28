@@ -1,12 +1,4 @@
 import { writable } from 'svelte/store';
+import type { Match } from '../../modules/matcher/entities/Match.ts';
 
-export type Contact = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	avatar: string;
-	lastMessage?: string;
-	isOnline?: boolean;
-}
-
-export const selectedContact = writable<Contact | null>(null)
+export const selectedMatch = writable<Match | null>(null)

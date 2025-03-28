@@ -10,6 +10,6 @@ export type Message = {
 
 export type MessageItem = Message & {
 	user: AuthTokenPayload;
-}
+};
 
 export type MessageWithoutId = Omit<Message, 'id'>;

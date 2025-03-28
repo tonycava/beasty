@@ -1,24 +1,34 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { selectedContact } from './Messages.svelte.ts';
+	import { selectedMatch } from './Messages.svelte.ts';
 	import { user } from '$auth/stores/UserStore';
 	import { focusOnMount } from '$lib/utils/utils.ts';
 	import { applyAction, enhance } from '$app/forms';
+	import { page } from '$app/state';
+	import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
+	import type { PageServerData } from './$types';
 
 	let newMessage = $state('');
 	let isLoading = $state(false);
 	let messageContainer: HTMLDivElement | null = $state(null);
 
-	let { data } = $props();
-	let messages = $state(data.messages);
+	type PageProps = {
+		data: PageServerData;
+	}
+	let { data }: PageProps = $props();
+	let messages = $state<MessageItem[]>(data.messages);
+
+	$effect(() => {
+		messages = [...data.messages];
+		scrollToBottom();
+	});
 
 	function handleSubmit() {
 		isLoading = true;
-		return async ({ result }) => {
+		return async ({ result }: { result: any }) => {
 			await applyAction(result);
-
-			messages = [...messages, result.data.message];
-			scrollToBottom();
+			messages.push(result.data.message);
+			setTimeout(scrollToBottom, 0)
 			newMessage = '';
 			isLoading = false;
 		};
@@ -29,43 +39,26 @@
 	}
 
 	function scrollToBottom() {
-		if (messageContainer) {
-			messageContainer.scrollTop = messageContainer.scrollHeight;
-		}
+		if (!messageContainer) return;
+		messageContainer.scrollIntoView({ behavior: 'smooth' });
 	}
-
 </script>
 
-{#if $selectedContact}
+{#if $selectedMatch != null}
 
-	<div class="flex items-center p-4 border-b border-gray-200 bg-white">
-		<div class="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-			<img src={$selectedContact.avatar || "/placeholder.svg"} alt={$selectedContact.name}
-					 class="w-full h-full object-cover" />
-			{#if $selectedContact.isOnline}
-						<span
-							class="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-1.5 border-white"></span>
-			{/if}
-		</div>
-		<div class="ml-3">
-			<div class="font-medium">{$selectedContact.name}</div>
-			<div class="text-sm text-gray-500">
-				{$selectedContact.isOnline ? 'En ligne' : 'Hors ligne'}
-			</div>
-		</div>
-	</div>
-
-	<div class="flex-1 overflow-y-auto p-4 space-y-4" bind:this={messageContainer}>
-		{#if messages.length !== 0}
+	<div class="flex-1 overflow-y-auto p-4 space-y-4">
+		{#if data.messages.length !== 0}
 			{#each messages as message (message.id)}
-				{@const isMe = message.senderId === $user?.id}
+				{@const isMe = message.user.id === $user?.id}
 				<div
 					class="flex items-end {isMe ? 'justify-end' : 'justify-start'} max-w-[80%] {isMe ? 'ml-auto' : 'mr-auto'}"
 					transition:fade={{ duration: 150 }}
 				>
 					{#if !isMe}
 						<div class="w-8 h-8 rounded-full overflow-hidden mr-2 flex-shrink-0">
-							<img src={$selectedContact.avatar} alt={`${$selectedContact.firstName} ${$selectedContact.lastName}`} class="w-full h-full object-cover" />
+							<img src={message.user.profilePicture || "/placeholder.svg"}
+									 alt={`${message.user.firstName} ${message.user.lastName}`}
+									 class="w-full h-full object-cover" />
 						</div>
 					{/if}
 
@@ -83,17 +76,38 @@
 
 					{#if isMe}
 						<div class="w-8 h-8 rounded-full overflow-hidden ml-2 flex-shrink-0">
-							<img src={$user.profilePicture} alt={`${message.user.firstName} ${message.user.lastName}`}
+							<img src={$user.profilePicture || "/placeholder.svg"}
+									 alt={`${$user?.firstName} ${$user?.lastName}`}
 									 class="w-full h-full object-cover" />
 						</div>
 					{/if}
 				</div>
 			{/each}
+			<div bind:this={messageContainer}></div>
 		{:else}
-			<p>Aucun message pour le moment</p>
+			<div class="flex flex-col items-center justify-center h-full text-center py-10"
+					 transition:fade={{ duration: 200 }}>
+				<div class="w-16 h-16 bg-[#ffe4d6] rounded-full flex items-center justify-center mb-4">
+					<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+							 stroke="#ff9f63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+					</svg>
+				</div>
+				<h3 class="text-lg font-medium text-gray-700 mb-2">Aucun message pour le moment</h3>
+				<p class="text-gray-500 text-sm max-w-xs">
+					Commencez la conversation avec {$selectedMatch?.animalMatched?.firstName || 'votre match'} en envoyant un
+					message ci-dessous.
+				</p>
+				<div class="flex space-x-2 mt-6">
+					<div class="w-2 h-2 bg-[#ff9f63] rounded-full animate-bounce" style="animation-delay: 0ms;"></div>
+					<div class="w-2 h-2 bg-[#ffdb78] rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
+					<div class="w-2 h-2 bg-[#3b7080] rounded-full animate-bounce" style="animation-delay: 300ms;"></div>
+				</div>
+			</div>
 		{/if}
 
 	</div>
+
 
 	<!-- Message input -->
 	<div class="p-4 border-t border-gray-200 bg-white">
@@ -102,7 +116,7 @@
 			use:enhance={handleSubmit}
 			enctype="multipart/form-data"
 			method="POST"
-			action="?/sendMessage"
+			action="?/sendMessage&senderId={page.url.searchParams.get('senderId')}&receiverId={page.url.searchParams.get('receiverId')}"
 		>
 			<input
 				use:focusOnMount

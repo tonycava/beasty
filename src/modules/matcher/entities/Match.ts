@@ -3,7 +3,7 @@ export type Match = {
     animalMatchedId: string;
     animalInitiator: any;
     animalMatched: any;
-	status: any;
+	  status: any;
     id: string;
 };
 

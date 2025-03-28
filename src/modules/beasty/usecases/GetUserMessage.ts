@@ -6,6 +6,7 @@ import {
 } from '$lib/interfaces/UseCase';
 import type { UserGetMessagesDto } from '../interfaces/dto/UserGetMessagesDto.ts';
 import type { ISQLiteMessageGetMessages } from '../interfaces/ISQLiteMessageRepository.ts';
+import type { Message } from '../entities/Message.ts';
 
 type Input = InputFactory<
 	UserGetMessagesDto,

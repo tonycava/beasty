@@ -11,20 +11,18 @@ datasource db {
 }
 
 model User {
-  id               String        @id @default(uuid())
-  googleUserId     String        @unique
-  firstName        String        @default("")
-  lastName         String        @default("")
-  email            String        @unique
-  profilePicture   String        @default("")
-  birthday         String        @default("")
-  bio              String        @default("")
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  animals          Animal[]
-  sentMessages     Message[]     @relation("SentMessages")
-  receivedMessages Message[]     @relation("ReceivedMessages")
-  subscription     Subscription?
+  id             String        @id @default(uuid())
+  googleUserId   String        @unique
+  firstName      String        @default("")
+  lastName       String        @default("")
+  email          String        @unique
+  profilePicture String        @default("")
+  birthday       String        @default("")
+  bio            String        @default("")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  animals        Animal[]
+  subscription   Subscription?
 }
 
 model Subscription {
@@ -43,20 +41,22 @@ model Subscription {
 }
 
 model Animal {
-  id               String   @id @default(uuid())
-  firstName        String   @default("")
-  birthday         String   @default("")
-  species          String   @default("")
-  breed            String   @default("")
-  sex              String   @default("")
-  bio              String   @default("")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id               String    @id @default(uuid())
+  firstName        String    @default("")
+  birthday         String    @default("")
+  species          String    @default("")
+  breed            String    @default("")
+  sex              String    @default("")
+  bio              String    @default("")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   userId           String
-  user             User     @relation(fields: [userId], references: [id])
+  user             User      @relation(fields: [userId], references: [id])
   images           Image[]
-  initiatedMatches Match[]  @relation("InitiatedMatches")
-  receivedMatches  Match[]  @relation("ReceivedMatches")
+  initiatedMatches Match[]   @relation("InitiatedMatches")
+  receivedMatches  Match[]   @relation("ReceivedMatches")
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model Message {
@@ -66,8 +66,8 @@ model Message {
   updatedAt  DateTime @updatedAt
   senderId   String
   receiverId String
-  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
-  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender     Animal   @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   Animal   @relation("ReceivedMessages", fields: [receiverId], references: [id])
 }
 
 model Match {

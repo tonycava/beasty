@@ -6,41 +6,45 @@ import { GetUserMessageUseCase } from '../../modules/beasty/usecases/GetUserMess
 import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
 import PrismaToEntity from '../../modules/beasty/entities/mappers/PrismaToEntity.ts';
 
-export const load: PageServerLoad = async ({ locals, url }) => {
+export const load: PageServerLoad = async ({ url }) => {
+	const senderId = url.searchParams.get('senderId');
+	const receiverId = url.searchParams.get('receiverId');
+
+	console.log('in load', senderId, receiverId);
+	if (!senderId || !receiverId) {
+		return { messages: [] as MessageItem[] };
+	}
 	const getUserMessageUseCase = await GetUserMessageUseCase({
 		messageRepository: SQLiteMessageRepository()
-	}).execute({ senderId: locals.user!.id, receiverId: url.searchParams.get('id')! });
+	}).execute({ senderId: senderId, receiverId: receiverId });
 
 	if (!getUserMessageUseCase.isSuccess) {
-		return {
-			messages: [] as MessageItem[]
-		};
+		return { messages: [] as MessageItem[] };
 	}
 
 	return {
-		messages: getUserMessageUseCase.data as MessageItem[],
+		messages: await Promise.all(getUserMessageUseCase.data.map(PrismaToEntity.MessagePrismaToMessageItem))
 	};
 };
 
 export const actions: Actions = {
-	async sendMessage({ request, locals }) {
+	async sendMessage({ request, url }) {
 		const form = await request.formData();
 
 		const content = form.get('content') as string;
-		const selectedContactId = form.get('selectedContactId') as string;
-		const userId = locals.user!.id;
+		const senderId = url.searchParams.get('senderId') as string;
+		const receiverId = url.searchParams.get('receiverId') as string;
 
 		if (!content) return fail(400, { message: 'Un message est requis.' });
-		if (!selectedContactId) return fail(400, { message: 'Une erreur est survenue.' });
 
 		const message = await prisma.message.create({
 			data: {
 				content: content,
-				receiver: { connect: { id: selectedContactId } },
-				sender: { connect: { id: userId } }
+				receiver: { connect: { id: receiverId } },
+				sender: { connect: { id: senderId } }
 			}
 		});
 
-		return { success: true, message: PrismaToEntity.MessagePrismaToMessageEntity(message) };
+		return { success: true, message: await PrismaToEntity.MessagePrismaToMessageItem(message) };
 	}
 };
