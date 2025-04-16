@@ -5,16 +5,21 @@ export default function injectSocketIO(server: HttpServer) {
 	const io = new Server(server);
 
 	io.on('connection', (socket) => {
-		const username = `User ${Math.round(Math.random() * 999999)}`;
-		socket.emit('name', username);
+		socket.on('joinChat', (room) => {
+			console.log('User joined room: ', `senderId=${room.senderId}:receiverId=${room.receiverId}`);
+			socket.join(`senderId=${room.senderId}:receiverId=${room.receiverId}`);
+		});
 
-		socket.on('message', (message: string) => {
-			console.log(`Message from ${username}: ${message}`);
-			io.emit('message', {
-				from: username,
-				message: message,
-				time: new Date().toLocaleString()
-			});
+		socket.on('leaveChat', (room) => {
+			console.log('User left room: ', `senderId=${room.senderId}:receiverId=${room.receiverId}`);
+			socket.leave(`senderId=${room.senderId}:receiverId=${room.receiverId}`);
+		});
+
+		socket.on('messageSent', (message) => {
+			console.log("To room", `senderId=${message.senderId}:receiverId=${message.receiverId}`);
+			io
+				.to(`senderId=${message.senderId}:receiverId=${message.receiverId}`)
+				.emit('messageReceived', message);
 		});
 	});
 

@@ -4,6 +4,11 @@ import { MatchStatus } from '../entities/Match'; // Importation du type MatchSta
 
 export const SQLiteMatcherRepositoryGet = (): IMatcherRepositoryGet => {
     return {
+        getMyAnimals(userId: string): Promise<Animal[]> {
+            return prisma.animal.findMany({
+                where: { userId },
+            });
+        },
         getMyMatches: async (animalId: string) => {
             // Récupérer tous les matchs acceptés pour l'animal
             const matches = await prisma.match.findMany({
@@ -39,8 +44,16 @@ export const SQLiteMatcherRepositoryGet = (): IMatcherRepositoryGet => {
                     ]
                 },
                 include: {
-                    animalInitiator: true,
-                    animalMatched: true
+                    animalInitiator: {
+                        include: {
+                            images:true
+                        }
+                    },
+                    animalMatched: {
+                        include: {
+                            images:true
+                        }
+                    }
                 }
             });
 

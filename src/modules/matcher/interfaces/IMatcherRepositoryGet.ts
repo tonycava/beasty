@@ -1,7 +1,13 @@
-import type { Match } from "../entities/Match";
+import type { Match } from '../entities/Match';
+import type { Animal } from '../entities/Animal.ts';
 
 export interface IMatcherRepositoryGetMyMatch {
-    getMyMatches(animalId: string): Promise<Match[]>;
+	getMyMatches(animalId: string): Promise<Match[]>;
 }
 
-export type IMatcherRepositoryGet = IMatcherRepositoryGetMyMatch;
+export interface IMatcherRepositoryGetAnimals {
+	getMyAnimals(userid: string): Promise<Animal[]>;
+}
+
+export type IMatcherRepositoryGet = IMatcherRepositoryGetMyMatch &
+	IMatcherRepositoryGetAnimals;
