@@ -10,9 +10,11 @@
 	import AnimalModal from '$lib/components/layout/AnimalModal.svelte';
 	import type { AnimalDto } from '../../modules/profile/dto/AnimalDto';
 	import { bounceIn } from 'svelte/easing';
+	import type { AnimalItem } from '../../modules/profile/entities/Animal';
 
 	let userProfile = $state<User | null>(null);
 	let animals = $state<any[]>([]);
+	let pets = $state<AnimalItem[] | null>([]);
 	let now = $state(new Date());
 	let year = $state(0);
 	let month = $state(0);
@@ -91,7 +93,7 @@
 		try {
 			if (!$user?.id) return;
 
-			await trpc($page).animalRouter.getAnimalsByUser.query($user.id);
+			pets = await trpc($page).animalRouter.getAnimalsByUser.query($user.id);
 
 		} catch (err) {
 			console.error('Erreur lors du chargement des animaux:', err);
@@ -133,6 +135,7 @@
 				userProfile = await trpc($page).getUser.query($user.id);
 
 				await loadAnimals();
+				// await trpc($page).animalRouter.getAnimalsByUser.query($user.id);
 			}
 
 			year = now.getFullYear();
@@ -304,69 +307,72 @@
 		<button type="button" class="ml-2 lg:ml-4" onclick={prevPet}>
 			<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Left_arrow.svg" alt="Précédent"/>
 		</button>
-		<div class="flex flex-col lg:flex-row justify-center max-[450px]:w-4/5 w-2/3">
-			<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
-				<div class="flex w-full pb-1">
-					<p class="w-1/2 text-right text-secondary font-semibold">Prénom :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].firstName}</p>
+		{#each pets ?? [] as pet}
+			<div class="flex flex-col lg:flex-row justify-center max-[450px]:w-4/5 w-2/3">
+				<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
+					<div class="flex w-full pb-1">
+						<p class="w-1/2 text-right text-secondary font-semibold">Prénom :</p>
+						<p class="w-1/2 ml-2">{pet.firstName}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<p class="w-1/2 text-right text-secondary font-semibold">Âge :</p>
+						{console.log(new Date(pet.birthday).toLocaleDateString())}
+						<p class="w-1/2 ml-2">{Math.abs((new Date(Date.now() - (new Date(pet.birthday)).getTime()).getUTCFullYear()) - 1970)} ans</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<p class="w-1/2 text-right text-secondary font-semibold">Anniversaire :</p>
+						<p class="w-1/2 ml-2">{pet.birthday}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<p class="w-1/2 text-right text-secondary font-semibold">Espèce :</p>
+						<p class="w-1/2 ml-2">{pet.species}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<p class="w-1/2 text-right text-secondary font-semibold">Race :</p>
+						<p class="w-1/2 ml-2">{pet.breed}</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<p class="w-1/2 text-right text-secondary font-semibold">Poids :</p>
+						<p class="w-1/2 ml-2">{pet.weight} kg</p>
+					</div>
+					<div class="flex w-full pb-1">
+						<p class="w-1/2 text-right text-secondary font-semibold">Sexe :</p>
+						<div class="flex w-1/2 ml-2 text-justify">
+							{#if pet.sex == "Mâle"}
+								<p>Mâle</p>
+								<img src="icons/Male.svg" class="w-5 ml-1" alt="Sexe masculin"/>
+							{:else}
+								<p>Femelle</p>
+								<img src="icons/Female.svg" class="w-5 ml-1" alt="Sexe féminin"/>
+							{/if}
+						</div>
+					</div>
 				</div>
-				<div class="flex w-full pb-1">
-					<p class="w-1/2 text-right text-secondary font-semibold">Âge :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].age} ans</p>
-				</div>
-				<div class="flex w-full pb-1">
-					<p class="w-1/2 text-right text-secondary font-semibold">Anniversaire :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].birthday}</p>
-				</div>
-				<div class="flex w-full pb-1">
-					<p class="w-1/2 text-right text-secondary font-semibold">Espèce :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].species}</p>
-				</div>
-				<div class="flex w-full pb-1">
-					<p class="w-1/2 text-right text-secondary font-semibold">Race :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].breed}</p>
-				</div>
-				<div class="flex w-full pb-1">
-					<p class="w-1/2 text-right text-secondary font-semibold">Poids :</p>
-					<p class="w-1/2 ml-2">{petsList[currentPetIndex].weight} kg</p>
-				</div>
-				<div class="flex w-full pb-1">
-					<p class="w-1/2 text-right text-secondary font-semibold">Sexe :</p>
-					<div class="flex w-1/2 ml-2 text-justify">
-						{#if petsList[currentPetIndex].gender == "Men"}
-							<p>Mâle</p>
-							<img src="icons/Male.svg" class="w-5 ml-1" alt="Sexe masculin"/>
-						{:else}
-							<p>Femelle</p>
-							<img src="icons/Female.svg" class="w-5 ml-1" alt="Sexe féminin"/>
-						{/if}
+				<div class="w-full lg:w-1/2 flex flex-col justify-center pl-5 lg:pl-0 pr-5 lg:pr-0 mb-5 lg:mb-0">
+					<div class="flex flex-col">
+						<p class="text-secondary font-semibold">Biographie :</p>
+						<p class="text-justify">
+							{pet.bio}
+						</p>
+					</div>
+					<div class="flex mt-5">
+						<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Modifier</button>
+						<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5">Désactiver</button>
 					</div>
 				</div>
 			</div>
-			<div class="w-full lg:w-1/2 flex flex-col justify-center pl-5 lg:pl-0 pr-5 lg:pr-0 mb-5 lg:mb-0">
-				<div class="flex flex-col">
-					<p class="text-secondary font-semibold">Biographie :</p>
-					<p class="text-justify">
-						{petsList[currentPetIndex].bio}
-					</p>
-				</div>
-				<div class="flex mt-5">
-					<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Modifier</button>
-					<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5">Désactiver</button>
+			<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
+				<div class="flex">
+					<button type="button" onclick={nextImage}>
+						<img
+							src="{animalImages[currentIndex]}"
+							class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
+							alt="Profil animal"
+						/>
+					</button>
 				</div>
 			</div>
-		</div>
-		<div class="flex flex-col w-full md:w-1/3 justify-center items-center">
-			<div class="flex">
-				<button type="button" onclick={nextImage}>
-					<img
-						src="{animalImages[currentIndex]}"
-						class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
-						alt="Profil animal"
-					/>
-				</button>
-			</div>
-		</div>
+		{/each}
 		<button type="button" class="mr-4 lg:mr-8" onclick={nextPet}>
 			<img class="h-12 md:h-8 lg:h-12 xl:h-16" src="icons/Right_arrow.svg" alt="Suivant"/>
 		</button>
