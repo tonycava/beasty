@@ -22,7 +22,6 @@ export const CreateAnimalUseCase: UseCase<Input, Output> = (dependencies) => {
 			if (!animal) {
 				return UseCaseResponseBuilder.error(400, "Une erreur est survenue");
 			}
-
 			return UseCaseResponseBuilder.success(201, animal);
 		}
 	};
