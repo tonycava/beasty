@@ -7,10 +7,13 @@
 	import { page } from '$app/state';
 	import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
 	import type { PageServerData } from './$types';
+	import { onMount } from 'svelte';
+	import socket from '$lib/server/socket.ts';
 
 	let newMessage = $state('');
 	let isLoading = $state(false);
 	let messageContainer: HTMLDivElement | null = $state(null);
+	let inputMessage: HTMLInputElement | null = $state(null);
 
 	type PageProps = {
 		data: PageServerData;
@@ -19,7 +22,13 @@
 	let messages = $state<MessageItem[]>(data.messages);
 
 	$effect(() => {
-		messages = [...data.messages];
+		messages = data.messages;
+		scrollToBottom();
+	});
+
+	socket.on('messageReceived', (message) => {
+		console.log("Receveived message");
+		messages.push(message);
 		scrollToBottom();
 	});
 
@@ -28,7 +37,7 @@
 		return async ({ result }: { result: any }) => {
 			await applyAction(result);
 			messages.push(result.data.message);
-			setTimeout(scrollToBottom, 0)
+			setTimeout(scrollToBottom, 0);
 			newMessage = '';
 			isLoading = false;
 		};
@@ -39,8 +48,9 @@
 	}
 
 	function scrollToBottom() {
-		if (!messageContainer) return;
+		if (!messageContainer || !inputMessage) return;
 		messageContainer.scrollIntoView({ behavior: 'smooth' });
+		inputMessage.focus();
 	}
 </script>
 
@@ -120,12 +130,14 @@
 		>
 			<input
 				use:focusOnMount
+				autoComplete="off"
 				type="text"
 				name="content"
 				disabled={isLoading}
 				placeholder="Taper le message..."
 				class="flex-1 p-3 border border-gray-200 rounded-l-full focus:outline-none focus:ring-2 focus:ring-[#ff9f63] focus:border-[#ff9f63]"
 				bind:value={newMessage}
+				bind:this={inputMessage}
 			/>
 			<input hidden name="selectedContactId" value="5be4ff39-60bc-48f8-9ec5-2a2dd1542281" />
 			<button

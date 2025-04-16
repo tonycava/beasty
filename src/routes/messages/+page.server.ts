@@ -5,12 +5,14 @@ import type { PageServerLoad } from './$types';
 import { GetUserMessageUseCase } from '../../modules/beasty/usecases/GetUserMessage.ts';
 import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
 import PrismaToEntity from '../../modules/beasty/entities/mappers/PrismaToEntity.ts';
+import socket from '$lib/server/socket.ts';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, locals }) => {
 	const senderId = url.searchParams.get('senderId');
 	const receiverId = url.searchParams.get('receiverId');
 
-	console.log('in load', senderId, receiverId);
+	socket.emit('joinChat', { senderId, receiverId });
+
 	if (!senderId || !receiverId) {
 		return { messages: [] as MessageItem[] };
 	}
@@ -37,7 +39,7 @@ export const actions: Actions = {
 
 		if (!content) return fail(400, { message: 'Un message est requis.' });
 
-		const message = await prisma.message.create({
+		const messageDb = await prisma.message.create({
 			data: {
 				content: content,
 				receiver: { connect: { id: receiverId } },
@@ -45,6 +47,12 @@ export const actions: Actions = {
 			}
 		});
 
-		return { success: true, message: await PrismaToEntity.MessagePrismaToMessageItem(message) };
+		const message = await PrismaToEntity.MessagePrismaToMessageItem(messageDb);
+
+		message["senderId"] = senderId;
+		message["receiverId"] = receiverId;
+		socket.emit('messageSent', message);
+
+		return { success: true, message  };
 	}
 };

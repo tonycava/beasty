@@ -16,7 +16,6 @@ const MessagePrismaToMessageItem = async (message: Message): Promise<MessageItem
 		},
 		select: { id: true, firstName: true, lastName: true, profilePicture: true },
 	});
-	console.log(user);
 	return {
 		id: message.id,
 		content: message.content,

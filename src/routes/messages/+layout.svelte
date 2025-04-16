@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import type { Match } from '../../modules/matcher/entities/Match.ts';
+	import socket from '$lib/server/socket.ts';
 
 	let { data, children } = $props();
 	let searchQuery = $state('');
@@ -28,8 +29,14 @@
 	));
 
 	async function handleSelectMatch(match: Match) {
-		await goto(`/messages?receiverId=${match.animalMatchedId}&senderId=${match.animalInitiatorId}`);
+		const previousReceiverId = page.url.searchParams.get('receiverId');
+		const previousSenderId = page.url.searchParams.get('senderId');
+
+		const receiverId = match.animalMatchedId;
+		const senderId = match.animalInitiatorId;
+		await goto(`/messages?receiverId=${receiverId}&senderId=${senderId}`);
 		await invalidate('/messages');
+		socket.emit('leaveChat', { senderId: previousSenderId, receiverId: previousReceiverId });
 		selectedMatch.set(match);
 	}
 </script>
