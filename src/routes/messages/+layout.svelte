@@ -6,7 +6,7 @@
 	import type { Match } from '../../modules/matcher/entities/Match.ts';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
-	import socket from '$lib/server/socket.ts';
+	import socket from '$lib/socket.ts';
 
 	let { data, children } = $props();
 	let searchQuery = $state('');
@@ -44,7 +44,7 @@
 </script>
 
 <div class="fixed top-0 left-0 right-0 z-50">
-    <Navbar />
+	<Navbar connectionUrl="your-connection-url-here" />
     <div class="h-32 bg-white"></div>
 </div>
 
@@ -66,20 +66,26 @@
 		<div class="flex-1 overflow-y-auto">
 			{#if filteredMatches.length > 0}
 				{#each filteredMatches as match (match.id)}
-					<div
+					<button
+						type="button"
 						class="flex items-center p-3 cursor-pointer hover:bg-gray-50 transition-colors {$selectedMatch?.id === match.id ? 'bg-gray-100' : ''}"
 						onclick={() => handleSelectMatch(match)}
+						onkeydown={(event) => event.key === 'Enter' && handleSelectMatch(match)}
+						aria-label={`Select match with ${match.animalMatched.firstName}`}
 					>
 						<div class="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
 							<img
-								src={match.animalMatched.images[0] ? match.animalMatched.images[0] : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyoR4bhP5YMy5Fdiz8M7RVZMHyDkMvmJx4LQ&s" alt="sdfsdf" class="w-full h-full object-cover'} />
+								src={match.animalMatched.images[0] ? match.animalMatched.images[0] : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyoR4bhP5YMy5Fdiz8M7RVZMHyDkMvmJx4LQ&s'}
+								alt={match.animalMatched.firstName || 'Match image'}
+								class="w-full h-full object-cover"
+							/>
 						</div>
-
+					
 						<div class="ml-3 overflow-hidden">
 							<div class="font-medium">{match.animalMatched.firstName}</div>
 							<div class="text-sm text-gray-500 truncate">Continuer a discuter !</div>
 						</div>
-					</div>
+					</button>
 				{/each}
 			{:else}
 				<!-- Empty state with style toggle -->
@@ -123,7 +129,7 @@
 						Looks like you haven't matched with anyone yet. Start swiping to find your perfect match!
 
 					</p>
-					<a href="/beastymatcher"
+					<a href="/beastyMatcher"
 						 class="inline-block bg-[#ff9f63] hover:bg-[#ff8c44] text-white font-medium py-2 px-6 rounded-full transition-colors">
 						Start Matching
 					</a>

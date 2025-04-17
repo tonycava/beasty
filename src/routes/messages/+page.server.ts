@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 import { GetUserMessageUseCase } from '../../modules/beasty/usecases/GetUserMessage.ts';
 import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
 import PrismaToEntity from '../../modules/beasty/entities/mappers/PrismaToEntity.ts';
-import socket from '$lib/server/socket.ts';
+import socket from '$lib/socket.ts';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
 	const senderId = url.searchParams.get('senderId');

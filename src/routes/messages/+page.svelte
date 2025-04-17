@@ -8,7 +8,7 @@
 	import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
 	import type { PageServerData } from './$types';
 	import { onMount } from 'svelte';
-	import socket from '$lib/server/socket.ts';
+	import socket from '$lib/socket.ts';
 
 	let newMessage = $state('');
 	let isLoading = $state(false);
