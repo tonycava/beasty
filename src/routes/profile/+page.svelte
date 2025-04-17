@@ -209,7 +209,6 @@
 			</form>
         {/if}
 	</div>
-	{console.log(pets)}
 	{#if pets?.length === 0}
 		<div class="flex items-center justify-center bg-secondary bg-opacity-10 md:h-1/2 pt-10 pb-10">
 			<svg aria-hidden="true" class="w-1/6 h-1/6 animate-spin dark:text-accent fill-secondary" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
