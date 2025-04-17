@@ -7,6 +7,7 @@
 	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import socket from '$lib/socket.ts';
+	import { user } from '$auth/stores/UserStore';
 
 	let { data, children } = $props();
 	let searchQuery = $state('');
@@ -34,17 +35,21 @@
 		const previousReceiverId = page.url.searchParams.get('receiverId');
 		const previousSenderId = page.url.searchParams.get('senderId');
 
-		const receiverId = match.animalMatchedId;
-		const senderId = match.animalInitiatorId;
-		await goto(`/messages?receiverId=${receiverId}&senderId=${senderId}`);
+		const senderId = $user?.id;
+
+		const receiverId = match.animalMatched.userId;
+
+		console.log(`Navigating to messages with senderId: ${senderId}, receiverId: ${receiverId}, matchId: ${match.id}`);
+
+		await goto(`/messages?receiverId=${receiverId}&senderId=${senderId}&matchId=${match.id}`);
 		await invalidate('/messages');
-			socket.emit('leaveChat', { senderId: previousSenderId, receiverId: previousReceiverId });
+		socket.emit('leaveChat', { senderId: previousSenderId, receiverId: previousReceiverId });
 		selectedMatch.set(match);
 	}
 </script>
 
 <div class="fixed top-0 left-0 right-0 z-50">
-	<Navbar connectionUrl="your-connection-url-here" />
+	<Navbar />
     <div class="h-32 bg-white"></div>
 </div>
 
@@ -75,7 +80,7 @@
 					>
 						<div class="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
 							<img
-								src={match.animalMatched.images[0] ? match.animalMatched.images[0] : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyoR4bhP5YMy5Fdiz8M7RVZMHyDkMvmJx4LQ&s'}
+								src={match.animalMatched.images[0].url ? match.animalMatched.images[0].url : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyoR4bhP5YMy5Fdiz8M7RVZMHyDkMvmJx4LQ&s'}
 								alt={match.animalMatched.firstName || 'Match image'}
 								class="w-full h-full object-cover"
 							/>

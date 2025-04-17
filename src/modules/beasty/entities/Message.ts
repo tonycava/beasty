@@ -6,6 +6,7 @@ export type Message = {
 	receiverId: string;
 	senderId: string;
 	createdAt: Date;
+	matchId?: string | null;
 };
 
 export type MessageItem = Message & {

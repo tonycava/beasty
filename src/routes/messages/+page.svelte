@@ -7,7 +7,6 @@
 	import { page } from '$app/state';
 	import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
 	import type { PageServerData } from './$types';
-	import { onMount } from 'svelte';
 	import socket from '$lib/socket.ts';
 
 	let newMessage = $state('');
@@ -119,7 +118,6 @@
 	</div>
 
 
-	<!-- Message input -->
 	<div class="p-4 border-t border-gray-200 bg-white">
 		<form
 			class="flex"
@@ -155,7 +153,6 @@
 		</form>
 	</div>
 {:else}
-	<!-- No contact selected state -->
 	<div class="flex-1 flex flex-col items-center justify-center bg-gray-50 p-6 text-center">
 		<div class="w-24 h-24 mb-6">
 			<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">

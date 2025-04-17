@@ -6,6 +6,7 @@ export default function injectSocketIO(server: HttpServer) {
 
 	io.on('connection', (socket) => {
 		socket.on('joinChat', (room) => {
+			console.log('socket connected: ', socket.id);
 			console.log('User joined room: ', `senderId=${room.senderId}:receiverId=${room.receiverId}`);
 			socket.join(`senderId=${room.senderId}:receiverId=${room.receiverId}`);
 		});

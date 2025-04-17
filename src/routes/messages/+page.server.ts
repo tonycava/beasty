@@ -36,23 +36,45 @@ export const actions: Actions = {
 		const content = form.get('content') as string;
 		const senderId = url.searchParams.get('senderId') as string;
 		const receiverId = url.searchParams.get('receiverId') as string;
+		const matchId = url.searchParams.get('matchId') as string;
 
 		if (!content) return fail(400, { message: 'Un message est requis.' });
 
-		const messageDb = await prisma.message.create({
-			data: {
-				content: content,
-				receiver: { connect: { id: receiverId } },
-				sender: { connect: { id: senderId } }
-			}
+		const senderExists = await prisma.user.findUnique({
+			where: { id: senderId }
 		});
 
-		const message = await PrismaToEntity.MessagePrismaToMessageItem(messageDb);
+		const receiverExists = await prisma.user.findUnique({
+			where: { id: receiverId }
+		});
 
-		message["senderId"] = senderId;
-		message["receiverId"] = receiverId;
-		socket.emit('messageSent', message);
+		if (!senderExists || !receiverExists) {
+			return fail(404, { message: 'Utilisateur introuvable.' });
+		}
 
-		return { success: true, message  };
+		const messageData: any = {
+			content,
+			sender: { connect: { id: senderId } },
+			receiver: { connect: { id: receiverId } }
+		};
+
+		if (matchId) {
+			messageData.match = { connect: { id: matchId } };
+		}
+
+		try {
+			const messageDb = await prisma.message.create({ data: messageData });
+
+			const message = await PrismaToEntity.MessagePrismaToMessageItem(messageDb);
+
+			message["senderId"] = senderId;
+			message["receiverId"] = receiverId;
+			socket.emit('messageSent', message);
+
+			return { success: true, message };
+		} catch (error) {
+			console.error('Error creating message:', error);
+			return fail(500, { message: 'Erreur lors de l\'envoi du message.' });
+		}
 	}
 };
