@@ -67,5 +67,8 @@
     "superjson": "^2.2.1",
     "svelte-inview": "^4.0.4",
     "trpc-sveltekit": "^3.6.2"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

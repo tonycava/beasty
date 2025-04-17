@@ -90,7 +90,7 @@ async function main() {
 				googleUserId: 'user10-google-id',
 				firstName: 'Jane',
 				lastName: 'Nelson',
-				email: 'jane@example.com',
+				email: 'jane.nelson@example.com',
 				profilePicture: 'url_to_picture10',
 				birthday: '1996-06-14',
 				bio: 'Passionate about animal welfare.'
@@ -99,7 +99,7 @@ async function main() {
 				googleUserId: 'user11-google-id',
 				firstName: 'John',
 				lastName: 'Doe',
-				email: 'john@example.com',
+				email: 'john.doe@example.com',
 				profilePicture: 'url_to_picture11',
 				birthday: '1998-01-01',
 				bio: 'Animal lover and photographer.'
@@ -108,7 +108,7 @@ async function main() {
 				googleUserId: 'user12-google-id',
 				firstName: 'Jane',
 				lastName: 'Smith',
-				email: 'jane@example.com',
+				email: 'jane.smith@example.com',
 				profilePicture: 'url_to_picture12',
 				birthday: '1997-05-20',
 				bio: 'Passionate about animal rescue.'
@@ -117,7 +117,7 @@ async function main() {
 				googleUserId: 'user13-google-id',
 				firstName: 'John',
 				lastName: 'Doe',
-				email: 'john@example.com',
+				email: 'john.doe2@example.com',
 				profilePicture: 'url_to_picture13',
 				birthday: '1996-09-15',
 				bio: 'Animal enthusiast and photographer.'
@@ -126,7 +126,7 @@ async function main() {
 				googleUserId: 'user14-google-id',
 				firstName: 'Jane',
 				lastName: 'Smith',
-				email: 'jane@example.com',
+				email: 'jane.smith2@example.com',
 				profilePicture: 'url_to_picture14',
 				birthday: '1995-11-30',
 				bio: 'Pet lover and nature enthusiast.'
@@ -135,7 +135,7 @@ async function main() {
 				googleUserId: 'user15-google-id',
 				firstName: 'John',
 				lastName: 'Doe',
-				email: 'john@example.com',
+				email: 'john.doe3@example.com',
 				profilePicture: 'url_to_picture15',
 				birthday: '1994-03-05',
 				bio: 'Animal lover and photographer.'
@@ -152,7 +152,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Labrador',
 			sex: 'Male',
-			bio: 'Friendly and playful.'
+			bio: 'Friendly and playful.',
+			weight: 30
 		},
 		{
 			firstName: 'Whiskers',
@@ -160,7 +161,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Siamese',
 			sex: 'Female',
-			bio: 'Loves to cuddle.'
+			bio: 'Loves to cuddle.',
+			weight: 5
 		},
 		{
 			firstName: 'Bella',
@@ -168,7 +170,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Beagle',
 			sex: 'Female',
-			bio: 'Curious and energetic.'
+			bio: 'Curious and energetic.',
+			weight: 20
 		},
 		{
 			firstName: 'Charlie',
@@ -176,7 +179,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Golden Retriever',
 			sex: 'Male',
-			bio: 'Loyal companion.'
+			bio: 'Loyal companion.',
+			weight: 35
 		},
 		{
 			firstName: 'Milo',
@@ -184,7 +188,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Maine Coon',
 			sex: 'Male',
-			bio: 'Loves to climb.'
+			bio: 'Loves to climb.',
+			weight: 8
 		},
 		{
 			firstName: 'Luna',
@@ -192,7 +197,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Persian',
 			sex: 'Female',
-			bio: 'Elegant and calm.'
+			bio: 'Elegant and calm.',
+			weight: 6
 		},
 		{
 			firstName: 'Rocky',
@@ -200,7 +206,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Boxer',
 			sex: 'Male',
-			bio: 'Strong and protective.'
+			bio: 'Strong and protective.',
+			weight: 40
 		},
 		{
 			firstName: 'Daisy',
@@ -208,7 +215,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Poodle',
 			sex: 'Female',
-			bio: 'Intelligent and friendly.'
+			bio: 'Intelligent and friendly.',
+			weight: 25
 		},
 		{
 			firstName: 'Oscar',
@@ -216,7 +224,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Bengal',
 			sex: 'Male',
-			bio: 'Very playful.'
+			bio: 'Very playful.',
+			weight: 7
 		},
 		{
 			firstName: 'Chloe',
@@ -224,7 +233,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Ragdoll',
 			sex: 'Female',
-			bio: 'Affectionate and social.'
+			bio: 'Affectionate and social.',
+			weight: 5
 		},
 		{
 			firstName: 'Max',
@@ -232,7 +242,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'German Shepherd',
 			sex: 'Male',
-			bio: 'Loyal and protective.'
+			bio: 'Loyal and protective.',
+			weight: 35
 		},
 		{
 			firstName: 'Simba',
@@ -240,7 +251,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Siberian',
 			sex: 'Male',
-			bio: 'Loves the snow.'
+			bio: 'Loves the snow.',
+			weight: 9
 		},
 		{
 			firstName: 'Zoe',
@@ -248,7 +260,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Cocker Spaniel',
 			sex: 'Female',
-			bio: 'Loves to run.'
+			bio: 'Loves to run.',
+			weight: 20
 		},
 		{
 			firstName: 'Shadow',
@@ -256,7 +269,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'British Shorthair',
 			sex: 'Male',
-			bio: 'Independent and quiet.'
+			bio: 'Independent and quiet.',
+			weight: 6
 		},
 		{
 			firstName: 'Maggie',
@@ -264,7 +278,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Dachshund',
 			sex: 'Female',
-			bio: 'Small but brave.'
+			bio: 'Small but brave.',
+			weight: 10
 		},
 		{
 			firstName: 'Leo',
@@ -272,7 +287,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Abyssinian',
 			sex: 'Male',
-			bio: 'Very curious.'
+			bio: 'Very curious.',
+			weight: 7
 		},
 		{
 			firstName: 'Coco',
@@ -280,7 +296,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'French Bulldog',
 			sex: 'Female',
-			bio: 'Charming and playful.'
+			bio: 'Charming and playful.',
+			weight: 12
 		},
 		{
 			firstName: 'Toby',
@@ -288,7 +305,8 @@ async function main() {
 			species: 'Dog',
 			breed: 'Shih Tzu',
 			sex: 'Male',
-			bio: 'Loves attention.'
+			bio: 'Loves attention.',
+			weight: 8
 		},
 		{
 			firstName: 'Nala',
@@ -296,7 +314,8 @@ async function main() {
 			species: 'Cat',
 			breed: 'Sphynx',
 			sex: 'Female',
-			bio: 'Loves warmth.'
+			bio: 'Loves warmth.',
+			weight: 4
 		}
 	];
 
@@ -306,6 +325,10 @@ async function main() {
 	}));
 
 	await prisma.animal.createMany({ data: animals });
+	
+	// Récupération des animaux créés
+	const createdAnimals = await prisma.animal.findMany();
+
 	console.log('Seeding completed!');
 }
 

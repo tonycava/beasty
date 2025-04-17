@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import type { Match } from '../../modules/matcher/entities/Match.ts';
+	import Navbar from '$lib/components/layout/Navbar.svelte';
+	import Footer from '$lib/components/layout/Footer.svelte';
 	import socket from '$lib/server/socket.ts';
 
 	let { data, children } = $props();
@@ -36,12 +38,17 @@
 		const senderId = match.animalInitiatorId;
 		await goto(`/messages?receiverId=${receiverId}&senderId=${senderId}`);
 		await invalidate('/messages');
-		socket.emit('leaveChat', { senderId: previousSenderId, receiverId: previousReceiverId });
+			socket.emit('leaveChat', { senderId: previousSenderId, receiverId: previousReceiverId });
 		selectedMatch.set(match);
 	}
 </script>
 
-<div class="flex h-screen bg-[#fff5ef]">
+<div class="fixed top-0 left-0 right-0 z-50">
+    <Navbar />
+    <div class="h-32 bg-white"></div>
+</div>
+
+<div class="flex h-screen bg-[#fff5ef] pt-32">
 	<!-- Sidebar -->
 
 	<div class="w-72 border-r border-gray-200 bg-white flex flex-col">
@@ -128,6 +135,8 @@
 		{/if}
 	</div>
 </div>
+
+<Footer />
 
 <style>
     ::-webkit-scrollbar {
