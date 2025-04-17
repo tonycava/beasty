@@ -13,6 +13,8 @@ const s3Client = new S3Client({
 
 const bucketName = env.S3_BUCKET_NAME || 'beasty-app';
 
+const cloudFrontDomain = env.CLOUDFRONT_DOMAIN || 'beasty-app.cloudfront.net';
+
 async function fileToBuffer(file: File): Promise<Buffer> {
 	const arrayBuffer = await file.arrayBuffer();
 	return Buffer.from(arrayBuffer);
@@ -40,12 +42,7 @@ export async function uploadToS3(file: File): Promise<string | null> {
 		const command = new PutObjectCommand(params);
 		await s3Client.send(command);
 
-		const getCommand = new GetObjectCommand({
-			Bucket: bucketName,
-			Key: key
-		});
-
-		return getSignedUrl(s3Client, getCommand, { expiresIn: 3600 });
+		return `https://${cloudFrontDomain}/${key}`;
 	} catch (error) {
 		console.error("Erreur lors de l'upload vers S3:", error);
 		return null;
@@ -53,10 +50,5 @@ export async function uploadToS3(file: File): Promise<string | null> {
 }
 
 export async function getS3FileUrl(key: string): Promise<string> {
-	const command = new GetObjectCommand({
-		Bucket: bucketName,
-		Key: key
-	});
-
-	return getSignedUrl(s3Client, command, { expiresIn: 3600 });
+	return `https://${cloudFrontDomain}/${key}`;
 }
