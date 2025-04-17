@@ -1,7 +1,8 @@
 import type { Animal } from "../entities/Animal";
+import type { AnimalItem } from '../../profile/entities/Animal.ts';
 
 export interface IMatcherRepositoryGetAnimals {
-    getAnimals(userId: string): Promise<Animal[]>;
+    getAnimals(userId: string): Promise<AnimalItem[]>;
 }
 
 export interface IMatcherRepositoryGetSelectedAnimal {

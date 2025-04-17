@@ -9,7 +9,7 @@ export const SQLiteMatcherRepository = (): _SQLiteMatcherRepository => {
             // Récupérer l'animal sélectionné de l'utilisateur
             const selectedAnimal = await prisma.animal.findFirst({
                 where: { userId },
-                select: { id: true }
+                include: { images: true },
             });
 
             if (!selectedAnimal) {
@@ -26,7 +26,14 @@ export const SQLiteMatcherRepository = (): _SQLiteMatcherRepository => {
                         { animalMatchedId: selectedAnimalId },
                     ],
                 },
-                select: { animalMatchedId: true, animalInitiatorId: true },
+                include: {
+                    animalInitiator: {
+                        include: { images: true },
+                    },
+                    animalMatched: {
+                        include: { images: true },
+                    },
+                }
             });
 
             // Extraire les IDs des animaux à exclure
@@ -43,19 +50,21 @@ export const SQLiteMatcherRepository = (): _SQLiteMatcherRepository => {
                         { id: { in: excludedIds } }, // Exclure les animaux déjà matchés
                     ],
                 },
+                include: { images: true },
             });
         },
 
         getSelectedAnimal: async (userId) => {
             return prisma.animal.findFirst({
                 where: { userId},
+                include: { images: true },
             });
         },
 
         getAnimalsByUser: async (userId) => {
             return prisma.animal.findMany({
                 where: { userId },  // On filtre par l'ID utilisateur
-                select: { id: true, firstName: true }, // On récupère uniquement l'ID et le prénom
+                include: { images: true },
             });
         },
         

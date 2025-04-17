@@ -8,8 +8,9 @@
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import { trpc } from '$lib/clients/client';
 	import confetti from 'canvas-confetti';
+	import type { AnimalItem } from '../../modules/profile/entities/Animal.ts';
 
-	let animals: Animal[] = [];
+	let animals: AnimalItem[] = [];
 	let selectedAnimal: Animal | null = null;
 	let currentAnimalIndex = 0;
 	let isAnimating = false;
@@ -35,7 +36,7 @@
 	});
 
 	async function handleAction(action: MatchStatus.ACCEPTED | MatchStatus.REJECTED) {
-		if (isAnimating || !selectedAnimal || !animals[currentAnimalIndex]) return;
+		if (isAnimating || !selectedAnimal) return;
 
 		isAnimating = true;
 		direction = action === MatchStatus.ACCEPTED ? 'left' : 'right';
@@ -53,6 +54,8 @@
 		}, 1000);
 
 		const animalMatched = animals[currentAnimalIndex];
+
+		console.log("selectedAnimal", selectedAnimal);
 
 		if (!selectedAnimal?.id || !animalMatched?.id) {
 			console.error("🚨 Erreur : ID manquant !");
@@ -138,7 +141,9 @@
 							<div
 								class="info flex flex-col items-center justify-start w-[336px] h-[400px] bg-[#3b7080] rounded-[10px] p-[20px]"
 							>
-								<div class="image w-[275px] h-[275px] bg-gray-500 mb-[10px]"></div>
+								<img class="image w-[275px] h-[275px] bg-gray-500 mb-[10px]"
+										 src={animal.images[0].url || 'https://via.placeholder.com/275'}
+										 alt={animal.firstName}/>
 								<div class="details text-white font-poppins text-[30px] text-center">
 									<div class="name">{animal.firstName}</div>
 									<div>{animal.birthday}</div>

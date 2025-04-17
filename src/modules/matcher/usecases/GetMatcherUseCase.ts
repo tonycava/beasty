@@ -7,6 +7,7 @@ import {
 
 import type { IMatcherRepository } from '../interfaces/IMatcherRepository';
 import type { Animal } from '../entities/Animal';
+import type { AnimalItem } from '../../profile/entities/Animal.ts';
 
 type Input = InputFactory<
     string,
@@ -15,7 +16,7 @@ type Input = InputFactory<
     }
 >;
 
-type Output = OutputFactory<{ animals: Animal[]; selectedAnimal: Animal | null }>;
+type Output = OutputFactory<{ animals: AnimalItem[]; selectedAnimal: Animal | null }>;
 
 export const GetMatcherUseCase: UseCase<Input, Output> = (dependencies) => {
     const { matcherRepository } = dependencies;

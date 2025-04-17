@@ -1,6 +1,7 @@
 import prisma from '$lib/server/db';
 import type { IMatcherRepositoryGet } from '../interfaces/IMatcherRepositoryGet';
 import { MatchStatus } from '../entities/Match'; // Importation du type MatchStatus
+import type { Animal } from '../entities/Animal.ts';
 
 export const SQLiteMatcherRepositoryGet = (): IMatcherRepositoryGet => {
     return {
