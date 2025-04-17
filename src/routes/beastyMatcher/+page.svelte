@@ -22,16 +22,37 @@
 		try {
 			const data = await trpc().matcherRouter.getMatcher.query($user?.id!);
 
-			animals = data.animals;
 			selectedAnimal = data.selectedAnimal;
+
+			animals = data.animals;
 
 			const matchedAnimalIds = data.animals.map((match: any) =>
 				match.animalInitiatorId === $user?.id ? match.animalMatchedId : match.animalInitiatorId
 			);
 
-			animals = animals.filter((animal) => !matchedAnimalIds.includes(animal.id));
+			animals = animals.filter((animal) => {
+				if (selectedAnimal && animal.id === selectedAnimal.id) {
+					console.log("Exclu: votre animal principal", animal);
+					return false;
+				}
+
+				if (animal.userId === $user?.id) {
+					console.log("Exclu: animal appartenant à l'utilisateur actuel", animal);
+					return false;
+				}
+
+				if (matchedAnimalIds.includes(animal.id)) {
+					console.log("Exclu: animal déjà matché", animal);
+					return false;
+				}
+
+				return true;
+			});
+
+			console.log("Animaux après filtrage:", animals);
+
 		} catch (error) {
-			console.error('Erreur lors de la récupération des animaux', error);
+			console.error('Erreur lors de la récupération des animaux:', error);
 		}
 	});
 
