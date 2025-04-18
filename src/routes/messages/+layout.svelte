@@ -21,6 +21,11 @@
 		const receiverId = page.url.searchParams.get('receiverId');
 		if (!senderId || !receiverId) return;
 
+		if (senderId && receiverId) {
+			console.log('Joining chat room:', { senderId, receiverId });
+			socket.emit('joinChat', { senderId, receiverId });
+		}
+
 		const index = matches.findIndex(match => match.animalInitiatorId === senderId && match.animalMatchedId === receiverId);
 		if (index === -1) return;
 
@@ -43,7 +48,6 @@
 
 		await goto(`/messages?receiverId=${receiverId}&senderId=${senderId}&matchId=${match.id}`);
 		await invalidate('/messages');
-		socket.emit('leaveChat', { senderId: previousSenderId, receiverId: previousReceiverId });
 		selectedMatch.set(match);
 	}
 </script>
