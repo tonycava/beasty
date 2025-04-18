@@ -101,34 +101,35 @@
 						class="flex items-end {isMe ? 'justify-end' : 'justify-start'} max-w-[80%] {isMe ? 'ml-auto' : 'mr-auto'}"
 						transition:fade={{ duration: 150 }}
 					>
-					{#if !isMe}
-						<div class="w-8 h-8 rounded-full overflow-hidden mr-2 flex-shrink-0">
-							<img src={message.user.profilePicture || "/placeholder.svg"}
-									 alt={`${message.user.firstName} ${message.user.lastName}`}
-									 class="w-full h-full object-cover" />
-						</div>
-					{/if}
+						{#if !isMe}
+							<div class="w-8 h-8 rounded-full overflow-hidden mr-2 flex-shrink-0">
+								<img src={message.user.profilePicture || "/placeholder.svg"}
+										 alt={`${message.user.firstName} ${message.user.lastName}`}
+										 class="w-full h-full object-cover" />
+							</div>
+						{/if}
 
-					<div class="flex flex-col">
-						<div
-							class="{isMe ? 'bg-[#3b7080] text-white rounded-tr-none' : 'bg-white border border-gray-200 rounded-tl-none'} p-3 rounded-2xl max-w-full break-words">
-							{message.content}
+						<div class="flex flex-col">
+							<div
+								class="{isMe ? 'bg-[#3b7080] text-white rounded-tr-none' : 'bg-white border border-gray-200 rounded-tl-none'} p-3 rounded-2xl max-w-full break-words">
+								{message.content}
+
+							</div>
+
+							<div
+								class="text-xs text-gray-500 mt-1 {isMe ? 'text-right' : 'text-left'}">
+								{formatTime(message.createdAt)}
+							</div>
 						</div>
 
-						<div
-							class="text-xs text-gray-500 mt-1 {isMe ? 'text-right' : 'text-left'}">
-							{formatTime(message.createdAt)}
-						</div>
+						{#if isMe}
+							<div class="w-8 h-8 rounded-full overflow-hidden ml-2 flex-shrink-0">
+								<img src={$user.profilePicture || "/placeholder.svg"}
+										 alt={`${$user?.firstName} ${$user?.lastName}`}
+										 class="w-full h-full object-cover" />
+							</div>
+						{/if}
 					</div>
-
-					{#if isMe}
-						<div class="w-8 h-8 rounded-full overflow-hidden ml-2 flex-shrink-0">
-							<img src={$user.profilePicture || "/placeholder.svg"}
-									 alt={`${$user?.firstName} ${$user?.lastName}`}
-									 class="w-full h-full object-cover" />
-						</div>
-					{/if}
-				</div>
 				{/if}
 			{/each}
 			<div bind:this={messageContainer}></div>
