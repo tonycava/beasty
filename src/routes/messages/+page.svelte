@@ -8,6 +8,7 @@
 	import type { MessageItem } from '../../modules/beasty/entities/Message.ts';
 	import type { PageServerData } from './$types';
 	import socket from '$lib/socket.ts';
+	import { onMount } from 'svelte';
 
 	let newMessage = $state('');
 	let isLoading = $state(false);
@@ -25,25 +26,61 @@
 		scrollToBottom();
 	});
 
-	socket.on('messageReceived', (message) => {
-		console.log("Receveived message");
-		messages.push(message);
-		scrollToBottom();
+	onMount(() => {
+		socket.on('messageReceived', (message) => {
+			console.log("Message reçu:", message);
+
+			const messageExists = messages.some(m => m.id === message.id);
+
+			if (!messageExists) {
+				const messageWithDate = {
+					...message,
+					createdAt: new Date(message.createdAt)
+				};
+
+				messages = [...messages, messageWithDate];
+				scrollToBottom();
+			}
+		});
+
+		return () => {
+			socket.off('messageReceived');
+		};
 	});
 
 	function handleSubmit() {
 		isLoading = true;
 		return async ({ result }: { result: any }) => {
 			await applyAction(result);
-			messages.push(result.data.message);
-			setTimeout(scrollToBottom, 0);
-			newMessage = '';
+
+			if (result.type === 'success') {
+				messages.push(result.data.message);
+
+				socket.emit('messageSent', result.data.message);
+
+				setTimeout(scrollToBottom, 0);
+				newMessage = '';
+			} else {
+				console.error('Message sending failed:', result);
+			}
+
 			isLoading = false;
 		};
 	}
 
-	function formatTime(date: Date) {
-		return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+	function formatTime(date: Date | string) {
+		try {
+			const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+			if (!(true) || isNaN(dateObj.getTime())) {
+				return 'Date invalide';
+			}
+
+			return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+		} catch (error) {
+			console.error('Erreur de formatage de date:', error, date);
+			return 'Erreur date';
+		}
 	}
 
 	function scrollToBottom() {
@@ -58,11 +95,12 @@
 	<div class="flex-1 overflow-y-auto p-4 space-y-4">
 		{#if data.messages.length !== 0}
 			{#each messages as message (message.id)}
-				{@const isMe = message.user.id === $user?.id}
-				<div
-					class="flex items-end {isMe ? 'justify-end' : 'justify-start'} max-w-[80%] {isMe ? 'ml-auto' : 'mr-auto'}"
-					transition:fade={{ duration: 150 }}
-				>
+				{#if message && message.user && message.content}
+					{@const isMe = message.user.id === $user?.id}
+					<div
+						class="flex items-end {isMe ? 'justify-end' : 'justify-start'} max-w-[80%] {isMe ? 'ml-auto' : 'mr-auto'}"
+						transition:fade={{ duration: 150 }}
+					>
 					{#if !isMe}
 						<div class="w-8 h-8 rounded-full overflow-hidden mr-2 flex-shrink-0">
 							<img src={message.user.profilePicture || "/placeholder.svg"}
@@ -91,6 +129,7 @@
 						</div>
 					{/if}
 				</div>
+				{/if}
 			{/each}
 			<div bind:this={messageContainer}></div>
 		{:else}
@@ -124,7 +163,7 @@
 			use:enhance={handleSubmit}
 			enctype="multipart/form-data"
 			method="POST"
-			action="?/sendMessage&senderId={page.url.searchParams.get('senderId')}&receiverId={page.url.searchParams.get('receiverId')}"
+			action="?/sendMessage&senderId={page.url.searchParams.get('senderId')}&receiverId={page.url.searchParams.get('receiverId')}&matchId={$selectedMatch?.id}"
 		>
 			<input
 				use:focusOnMount

@@ -11,8 +11,6 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	const senderId = url.searchParams.get('senderId');
 	const receiverId = url.searchParams.get('receiverId');
 
-	socket.emit('joinChat', { senderId, receiverId });
-
 	if (!senderId || !receiverId) {
 		return { messages: [] as MessageItem[] };
 	}
@@ -69,7 +67,6 @@ export const actions: Actions = {
 
 			message["senderId"] = senderId;
 			message["receiverId"] = receiverId;
-			socket.emit('messageSent', message);
 
 			return { success: true, message };
 		} catch (error) {
