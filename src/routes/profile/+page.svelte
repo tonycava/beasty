@@ -248,14 +248,15 @@
 					</div>
 					<div class="flex w-full pb-1">
 						<label class="max-[600px]:w-1/3 w-2/5 lg:w-1/3 text-right text-secondary font-semibold" for="gender">Sexe :</label>
-						<div class="flex w-1/2 lg:w-2/3 ml-2 text-justify">	
+						<div class="flex w-1/2 lg:w-2/3 ml-2 text-justify">
 							<div class="flex items-center ml-2">
-								<input type="radio" id="sex" name="sex" value="Mâle" />
+								<input type="radio" id="sex" name="sex" value="Mâle" checked={(pets ? pets[currentPetIndex]?.sex : '') == "Mâle"} />
 								<p class="ml-1">Mâle</p>
 								<img src="icons/Male.svg" class="w-5 ml-1 mr-2" alt="Sexe masculin"/>
 							</div>
+							
 							<div class="flex items-center ml-3">
-								<input type="radio" id="sex" name="sex" value="Femelle"/>
+								<input type="radio" id="sex" name="sex" value="Femelle" checked={(pets ? pets[currentPetIndex]?.sex : '') == "Femelle"}/>
 								<p class="ml-1">Femelle</p>
 								<img src="icons/Female.svg" class="w-5 ml-1" alt="Sexe féminin"/>
 							</div>
@@ -277,7 +278,7 @@
 				<div class="flex">
 					<button type="button" onclick={nextImage}>
 						<img
-							src="{animalImages[currentIndex]}"
+							src="{pets? pets[currentPetIndex].images[currentIndex].url:''}"
 							class="rounded-full h-40 lg:h-48 xl:h-64 w-64 shadow-[12px_-12px_#FFDB78] lg:shadow-[24px_-24px_#FFDB78] mt-6 object-cover"
 							alt="Profil animal"
 						/>
