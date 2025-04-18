@@ -218,7 +218,9 @@
 		</div>
 	{:else}
 		{#if editPetMode}
-		<form method="POST" action="?/updatePet" use:enhance class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2 pt-10 pb-10">
+		<form method="POST" action="?/updatePet" use:enhance={() => {
+			editPetMode = !editPetMode;
+		}} class="flex flex-col-reverse md:flex-row items-center bg-secondary bg-opacity-10 md:h-1/2 pt-10 pb-10">
 			<div class="flex flex-col lg:flex-row justify-center max-[450px]:w-4/5 w-2/3">
 				<div class="w-full lg:w-1/2 flex flex-col justify-center mt-5 lg:mt-0">
 					<div class="flex w-full pb-1">
@@ -345,8 +347,8 @@
 						</p>
 					</div>
 					<div class="flex mt-5">
-						<button class="bg-accent text-white rounded-full w-1/2" onclick={toggleEditPet}>Modifier</button>
-						<button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5">Désactiver</button>
+						<button class="bg-accent text-white rounded-full w-full" onclick={toggleEditPet}>Modifier</button>
+						<!-- <button class="bg-white text-[#E91414] border border-secondary rounded-full w-1/2 ml-5">Désactiver</button> -->
 					</div>
 				</div>
 			</div>

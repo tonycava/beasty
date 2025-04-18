@@ -9,6 +9,7 @@ import { userDto } from '../../modules/profile/dto/UserDto';
 import { UpdateUserUseCase } from '../../modules/profile/usecase/UpdateUserUseCase';
 import { SQLiteUserProfileRepository } from '../../modules/profile/repositories/SQLiteUserProfileRepository';
 import { UpdateAnimalUseCase } from '../../modules/profile/usecase/UpdateAnimalUseCase';
+import { animalEditDto } from '../../modules/profile/dto/AnimalEditDto';
 
 export const load = async () => {
 	const form = await superValidate(zod(animalDto));
@@ -38,8 +39,9 @@ export const actions = {
 
 
 	updatePet: async (event) => {
+
 		const formData = await event.request.formData();
-		const form = await superValidate(formData, zod(animalDto));
+		const form = await superValidate(formData, zod(animalEditDto));
 
 		if(!form.valid) {
 			return fail(400, withFiles({ form }));
@@ -58,6 +60,7 @@ export const actions = {
 
 	
 	updateUser: async (event) => {
+
 		const formData = await event.request.formData();
 		const form = await superValidate(formData, zod(userDto));
 

@@ -1,9 +1,9 @@
 import { type InputFactory, type OutputFactory, type UseCase, UseCaseResponseBuilder } from '$lib/interfaces/UseCase';
-import type { AnimalDto } from '../dto/AnimalDto';
+import type { AnimalEditDto } from '../dto/AnimalEditDto';
 import type { IAnimalRepositoryUpdateAnimal } from '../interfaces/IAnimalRepository';
 
 type Input = InputFactory<
-	AnimalDto,
+	AnimalEditDto,
 	{
 		animalRepository: IAnimalRepositoryUpdateAnimal;
 	}
@@ -15,7 +15,7 @@ export const UpdateAnimalUseCase: UseCase<Input, Output> = (dependencies) => {
 	const { animalRepository } = dependencies;
 
 	return {
-		execute: async (data: AnimalDto) => {
+		execute: async (data: AnimalEditDto) => {
 			try {
 				await animalRepository.updateAnimal(data);
 
