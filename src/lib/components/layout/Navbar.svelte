@@ -110,7 +110,7 @@
 				<a href="#essayer" class="cursor-pointer">
 					{@render sections("Essayez-le", sectionsView.tryIt)}
 				</a>
-				<a href="#premium" class="cursor-pointer">
+				<a href="/premium" class="cursor-pointer">
 					{@render sections("Premium", sectionsView.premium)}
 				</a>
 			{/if}
@@ -172,7 +172,7 @@
 					<a href="#home" class="px-6 py-3 hover:bg-secondary/10">Accueil</a>
 					<a href="#beasy" class="px-6 py-3 hover:bg-secondary/10">Beasty</a>
 					<a href="#essayer" class="px-6 py-3 hover:bg-secondary/10">Essayez-le</a>
-					<a href="#premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
+					<a href="/premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
 					<div class="px-6 py-3">
 						<a href="/login" class="block w-full">
 							<PrimaryButton type="submit" class="w-full">
