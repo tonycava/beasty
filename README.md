@@ -1,22 +1,12 @@
-# create-svelte
+# Beasty
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Slogan : Parce que l'amour a aussi des poils !
 
-## Creating a project
+Auteurs : Anthony CAVAGNE, Lucas ESCAFFRE, Théo MANEVIT, Myriam MBANZULU et Sarah BARRABÉ
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Lancer le projet
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Afin de lancer le projet après clonage du git, vous devez installer les dépendances via la commande ` npm install `. Pour démarrer le serveur, vous pouvez suivre les commandes suivantes.
 
 ```bash
 npm run dev
@@ -25,14 +15,16 @@ npm run dev
 npm run dev -- --open
 ```
 
-## Building
+## Consulter la base de données
 
-To create a production version of your app:
+Pour consulter la base de données vous pouvez lancer la commande `npx prisma studio`.
 
-```bash
-npm run build
-```
+## Powerpoint
 
-You can preview the production build with `npm run preview`.
+https://www.canva.com/design/DAGe_r-DC7I/KRINi_l43OIHFzrtp8lt4w/edit?utm_content=DAGe_r-DC7I&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Figma
+
+https://www.figma.com/design/MyToyTKOEINBfebVrXW72o/Beasty?node-id=0-1&t=0A1GZE4HhMxKKM5j-1
+
+![Logo du projet Beasty](/static/icons/Logo.svg)
