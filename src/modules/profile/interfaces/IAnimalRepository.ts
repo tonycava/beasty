@@ -1,5 +1,6 @@
 import type { Animal, AnimalItem } from '../entities/Animal';
 import type { AnimalDto } from '../dto/AnimalDto';
+import type { AnimalEditDto } from '../dto/AnimalEditDto';
 
 export type IAnimalRepositoryCreateAnimal = {
 	createAnimal(animal: AnimalDto): Promise<AnimalItem>;
@@ -14,7 +15,7 @@ export type IAnimalRepositoryGetAnimalsByUser = {
 };
 
 export type IAnimalRepositoryUpdateAnimal = {
-	updateAnimal(animal: AnimalDto): Promise<void>;
+	updateAnimal(animal: AnimalEditDto): Promise<void>;
 };
 
 export type IAnimalRepositoryDeleteAnimal = {
