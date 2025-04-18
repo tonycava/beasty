@@ -4,32 +4,29 @@
 	import PrimaryButton from '$lib/components/buttons/PrimaryButton.svelte';
 	import { user } from '$auth/stores/UserStore';
 	import { trpc } from '$lib/clients/client';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import { slide } from 'svelte/transition';
-	import { goto } from '$app/navigation';
 
 	type Props = {
-		connectionUrl: string;
 		sectionsView?: Record<string, boolean>;
 		isHomePage?: boolean;
 	}
 
 	let {
-		connectionUrl = '',
-		sectionsView = {
+		sectionsView = $bindable({
 			home: false,
 			beastyMatcher: false,
 			beasty: false,
 			tryIt: false,
 			premium: false
-		},
+		}),
 		isHomePage = false
 	}: Props = $props();
 
 	const onDisconnect = async () => {
 		try {
-			await trpc($page).authRouter.logout.query();
+			await trpc(page).authRouter.logout.query();
 
 			user.set(null);
 
@@ -39,12 +36,10 @@
 		}
 	};
 
-	$inspect(connectionUrl)
-
 	$effect(() => {
 		if (!browser || !isHomePage) return;
 
-		const path = $page.url.pathname;
+		const path = page.url.pathname;
 		if (path === '/') {
 			if ($user) {
 				window.location.href = '/beastyMatcher';
@@ -65,7 +60,7 @@
 	};
 </script>
 
-{#snippet sections(nom: String, sectionView: Boolean)}
+{#snippet sections(nom: string, sectionView: boolean)}
 	<div class="flex flex-col gap-1 items-center p-2 justify-center group relative">
 		<span class="relative z-10">{nom}</span>
 		<div class="absolute bottom-0 left-0 w-full h-0.5 bg-secondary transform origin-left
@@ -106,16 +101,16 @@
 					{@render sections("Premium", sectionsView.premium)}
 				</a>
 			{:else}
-				<a href="/" class="cursor-pointer">
+				<a href="#home" class="cursor-pointer">
 					{@render sections("Accueil", sectionsView.home)}
 				</a>
-				<a href="/beasty" class="cursor-pointer">
+				<a href="#beasty" class="cursor-pointer">
 					{@render sections("Beasty", sectionsView.beasty)}
 				</a>
-				<a href="/essayer" class="cursor-pointer">
+				<a href="#essayer" class="cursor-pointer">
 					{@render sections("Essayez-le", sectionsView.tryIt)}
 				</a>
-				<a href="/premium" class="cursor-pointer">
+				<a href="#premium" class="cursor-pointer">
 					{@render sections("Premium", sectionsView.premium)}
 				</a>
 			{/if}
@@ -174,10 +169,10 @@
 						</PrimaryButton>
 					</div>
 				{:else}
-					<a href="/" class="px-6 py-3 hover:bg-secondary/10">Accueil</a>
-					<a href="/beasty" class="px-6 py-3 hover:bg-secondary/10">Beasty</a>
-					<a href="/essayer" class="px-6 py-3 hover:bg-secondary/10">Essayez-le</a>
-					<a href="/premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
+					<a href="#home" class="px-6 py-3 hover:bg-secondary/10">Accueil</a>
+					<a href="#beasy" class="px-6 py-3 hover:bg-secondary/10">Beasty</a>
+					<a href="#essayer" class="px-6 py-3 hover:bg-secondary/10">Essayez-le</a>
+					<a href="#premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
 					<div class="px-6 py-3">
 						<a href="/login" class="block w-full">
 							<PrimaryButton type="submit" class="w-full">
