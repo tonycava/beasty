@@ -1,4 +1,4 @@
-import type { Tier } from '$lib/data/subscriptionTiers';
+import type { Tier } from '$lib/utils/tier';
 
 export type UserSubscriptionAcknoledgement = {
 	userId: string;

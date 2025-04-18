@@ -7,15 +7,19 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { slide } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 
 	type Props = {
+		connectionUrl: string;
 		sectionsView?: Record<string, boolean>;
 		isHomePage?: boolean;
 	}
 
 	let {
+		connectionUrl = '',
 		sectionsView = {
 			home: false,
+			beastyMatcher: false,
 			beasty: false,
 			tryIt: false,
 			premium: false
@@ -23,16 +27,32 @@
 		isHomePage = false
 	}: Props = $props();
 
-	const onDisconnect = () => {
-		trpc($page).authRouter.logout.mutate();
-		user.set(null);
-	}
+	const onDisconnect = async () => {
+		try {
+			await trpc($page).authRouter.logout.query();
+
+			user.set(null);
+
+			location.replace('/');
+		} catch (error) {
+			console.error('Erreur lors de la déconnexion:', error);
+		}
+	};
+
+	$inspect(connectionUrl)
 
 	$effect(() => {
 		if (!browser || !isHomePage) return;
 
 		const path = $page.url.pathname;
-		if (path === '/') sectionsView.home = true;
+		if (path === '/') {
+			if ($user) {
+				window.location.href = '/beastyMatcher';
+			} else {
+				sectionsView.home = true;
+			}
+		}
+		else if (path === '/beastyMatcher') sectionsView.beastyMatcher = true;
 		else if (path === '/profil' || path === '/beasty') sectionsView.beasty = true;
 		else if (path === '/messages' || path === '/essayer') sectionsView.tryIt = true;
 		else if (path === '/premium') sectionsView.premium = true;
@@ -72,10 +92,10 @@
 		</div>
 
 		<div class="hidden text-secondary mx-auto font-bold space-x-8 text-2xl lg:flex">
-			<a href="/" class="cursor-pointer">
-				{@render sections("Accueil", sectionsView.home)}
-			</a>
 			{#if $user}
+				<a href="/beastyMatcher" class="cursor-pointer">
+					{@render sections("BeastyMatcher", sectionsView.beastyMatcher)}
+				</a>
 				<a href="/profile" class="cursor-pointer">
 					{@render sections("Profil", sectionsView.beasty)}
 				</a>
@@ -86,6 +106,9 @@
 					{@render sections("Premium", sectionsView.premium)}
 				</a>
 			{:else}
+				<a href="/" class="cursor-pointer">
+					{@render sections("Accueil", sectionsView.home)}
+				</a>
 				<a href="/beasty" class="cursor-pointer">
 					{@render sections("Beasty", sectionsView.beasty)}
 				</a>
@@ -135,7 +158,6 @@
 			transition:slide={{ duration: 300 }}
 		>
 			<div class="flex flex-col py-4 text-secondary font-bold">
-				<a href="/" class="px-6 py-3 hover:bg-secondary/10">Accueil</a>
 				{#if $user}
 					<a href="/profile" class="px-6 py-3 hover:bg-secondary/10">Profil</a>
 					<a href="/messages" class="px-6 py-3 hover:bg-secondary/10">Messages</a>
@@ -152,6 +174,7 @@
 						</PrimaryButton>
 					</div>
 				{:else}
+					<a href="/" class="px-6 py-3 hover:bg-secondary/10">Accueil</a>
 					<a href="/beasty" class="px-6 py-3 hover:bg-secondary/10">Beasty</a>
 					<a href="/essayer" class="px-6 py-3 hover:bg-secondary/10">Essayez-le</a>
 					<a href="/premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
