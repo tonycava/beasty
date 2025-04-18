@@ -3,7 +3,7 @@
 </script>
 
 
-<div class="container mx-auto px-4 pt-32 z-10">
+<div id="home" class="container mx-auto px-4 pt-32 z-10">
 	<div class="flex flex-col mt-28 md:flex-row items-center justify-between mb-24">
 		<div class="md:w-1/2">
 			<div class=" mb-8 md:mb-0 w-4/5 mx-auto">

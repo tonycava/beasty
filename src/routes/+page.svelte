@@ -1,8 +1,6 @@
 <script lang="ts">
 	import type { PageServerData } from './$types';
-	import { LogoutUseCase } from '$auth/usecases/LogoutUser';
 	import Navbar from '$lib/components/layout/Navbar.svelte';
-	import Cookies from 'js-cookie';
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
@@ -11,14 +9,6 @@
 	import HomeBeasty from '$lib/components/layout/HomeBeasty.svelte';
 	import HomeTryIt from '$lib/components/layout/HomeTryIt.svelte';
 	import HomePremium from '$lib/components/layout/HomePremium.svelte';
-	import { user } from '$auth/stores/UserStore';
-
-
-	type Props = {
-		data: PageServerData;
-	};
-
-	let { data }: Props = $props();
 
 	type SectionsView = {
 		home: boolean;
@@ -26,6 +16,13 @@
 		tryIt: boolean;
 		premium: boolean;
 	};
+
+	let sectionsView: SectionsView = $state({
+		home: true,
+		beasty: false,
+		tryIt: false,
+		premium: false
+	});
 
 	onMount(() => {
 		if (!browser) return;
@@ -37,12 +34,6 @@
 		});
 	});
 
-	let sectionsView: SectionsView = $state({
-		home: true,
-		beasty: false,
-		tryIt: false,
-		premium: false
-	});
 
 	const changeSection = (section: keyof SectionsView) => {
 		const t = Object.keys(sectionsView) as Array<keyof SectionsView>;
@@ -52,14 +43,9 @@
 		sectionsView[section] = true;
 	};
 
-	$inspect({ sectionsView });
-	const disconnect = () => {
-		LogoutUseCase({ cookieProvider: Cookies }).execute();
-	};
 </script>
 
 <Navbar
-  connectionUrl={data.url}
 	bind:sectionsView
 	isHomePage={true}
 />
@@ -67,6 +53,7 @@
 <Header />
 
 <div
+	id="beasty"
 	use:inview
 	oninview_enter={() => {
 		changeSection('beasty');
@@ -76,6 +63,7 @@
 </div>
 
 <div
+	id="essayer"
 	use:inview
 	oninview_enter={() => {
 		changeSection('tryIt');
@@ -85,6 +73,7 @@
 </div>
 
 <div
+	id="premium"
 	use:inview
 	oninview_enter={() => {
 		changeSection('premium');
