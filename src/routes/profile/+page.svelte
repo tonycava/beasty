@@ -266,7 +266,7 @@
 				<div class="w-full lg:w-1/2 flex flex-col justify-center pl-5 lg:pl-0 pr-5 lg:pr-0 mb-5 lg:mb-0">
 					<div class="flex flex-col">
 						<label class="text-secondary font-semibold" for="bio">Biographie :</label>
-						<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 pr-1 ml-2 text-justify overflow-x-hidden" rows="10" cols="35" id="bio" name="bio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum neque odio, eleifend at vehicula a, efficitur ac arcu. Cras malesuada ornare metus id imperdiet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas varius nunc vitae dui tristique ullamcorper.</textarea>
+						<textarea class="border-2 border-accent rounded-lg pt-0.5 pb-0.5 pl-1 pr-1 ml-2 text-justify overflow-x-hidden" rows="10" cols="35" id="bio" name="bio">{pets ? pets[currentPetIndex]?.bio: 'Aucune description'}</textarea>
 					</div>
 					<div class="flex mt-5">
 						<button type="submit" class="bg-accent text-white rounded-full w-1/2">Sauvegarder</button>
