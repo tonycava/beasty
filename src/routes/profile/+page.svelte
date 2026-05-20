@@ -355,7 +355,7 @@
 						</div>
 						<div class="flex w-full pb-1">
 							<p class="w-1/2 text-right text-secondary font-semibold">Âge :</p>
-							{console.log(new Date(pets ? pets[currentPetIndex]?.birthday : '').getMonth() + 1)}
+							{new Date(pets ? pets[currentPetIndex]?.birthday : '').getMonth() + 1}
 							<p
 								class="w-1/2 ml-2">{Math.abs((new Date(Date.now() - (new Date(pets ? pets[currentPetIndex]?.birthday : '')).getTime()).getUTCFullYear()) - 1970) == 0 ? Math.abs(new Date(pets ? pets[currentPetIndex]?.birthday : '').getMonth() + 1) + ' mois' : Math.abs((new Date(Date.now() - (new Date(pets ? pets[currentPetIndex]?.birthday : '')).getTime()).getUTCFullYear()) - 1970) + ' ans'}</p>
 						</div>
