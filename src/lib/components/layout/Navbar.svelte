@@ -50,7 +50,7 @@
 		else if (path === '/beastyMatcher') sectionsView.beastyMatcher = true;
 		else if (path === '/profil' || path === '/beasty') sectionsView.beasty = true;
 		else if (path === '/messages' || path === '/essayer') sectionsView.tryIt = true;
-		else if (path === '/premium') sectionsView.premium = true;
+		//else if (path === '/premium') sectionsView.premium = true;
 	});
 
 	let isMenuOpen = $state(false);
@@ -97,9 +97,6 @@
 				<a href="/messages" class="cursor-pointer">
 					{@render sections("Messages", sectionsView.tryIt)}
 				</a>
-				<a href="/premium" class="cursor-pointer">
-					{@render sections("Premium", sectionsView.premium)}
-				</a>
 			{:else}
 				<a href="#home" class="cursor-pointer">
 					{@render sections("Accueil", sectionsView.home)}
@@ -109,9 +106,6 @@
 				</a>
 				<a href="#essayer" class="cursor-pointer">
 					{@render sections("Essayez-le", sectionsView.tryIt)}
-				</a>
-				<a href="/premium" class="cursor-pointer">
-					{@render sections("Premium", sectionsView.premium)}
 				</a>
 			{/if}
 		</div>
@@ -156,7 +150,6 @@
 				{#if $user}
 					<a href="/profile" class="px-6 py-3 hover:bg-secondary/10">Profil</a>
 					<a href="/messages" class="px-6 py-3 hover:bg-secondary/10">Messages</a>
-					<a href="/premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
 					<div class="px-6 py-3">
 						<PrimaryButton
 							type="submit"
@@ -172,7 +165,6 @@
 					<a href="#home" class="px-6 py-3 hover:bg-secondary/10">Accueil</a>
 					<a href="#beasy" class="px-6 py-3 hover:bg-secondary/10">Beasty</a>
 					<a href="#essayer" class="px-6 py-3 hover:bg-secondary/10">Essayez-le</a>
-					<a href="/premium" class="px-6 py-3 hover:bg-secondary/10">Premium</a>
 					<div class="px-6 py-3">
 						<a href="/login" class="block w-full">
 							<PrimaryButton type="submit" class="w-full">

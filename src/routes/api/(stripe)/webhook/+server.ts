@@ -45,10 +45,9 @@ async function handleUpdate(subscription: Stripe.Subscription) {
 		userRepository: SQLiteSubscriptionUserRepository()
 	}).execute({
 		customerId: typeof customer === 'string' ? customer : customer.id,
-		cancelationDate:
-			subscription.cancel_at_period_end
-				? new Date(subscription.current_period_end! * 1000)
-				: null,
+		cancelationDate: subscription.cancel_at_period_end
+			? new Date(subscription.current_period_end! * 1000)
+			: null,
 		tier
 	});
 }

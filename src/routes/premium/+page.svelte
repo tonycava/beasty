@@ -110,6 +110,8 @@
 		day: 'numeric',
 	});
 
+	console.log($user)
+
 </script>
 
 <div class="flex flex-col min-h-screen">
